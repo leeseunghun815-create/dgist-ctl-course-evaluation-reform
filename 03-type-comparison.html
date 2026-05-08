@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DGIST 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 (내부 보고용)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+@page {
+  size: A4 landscape;
+  margin: 14mm 16mm 14mm 16mm;
+  @bottom-center {
+    content: "— " counter(page) " —";
+    font-family: 'Malgun Gothic','Apple SD Gothic Neo',Arial,sans-serif;
+    font-size: 8pt; color: #888;
+  }
+  @top-right {
+    content: "DGIST 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0";
+    font-family: 'Malgun Gothic','Apple SD Gothic Neo',Arial,sans-serif;
+    font-size: 7.5pt; color: #bbb;
+  }
+}
+@page :first { @bottom-center { content: none; } @top-right { content: none; } }
+html { background: #c8c8c8; }
+body {
+  font-family: 'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',Arial,sans-serif;
+  font-size: 9.5pt; color: #1c1c2e; line-height: 1.65;
+  background: #fff; width: 297mm; margin: 24px auto;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.22);
+  word-break: keep-all; overflow-wrap: break-word;
+}
+.page {
+  min-height: 210mm; padding: 14mm 16mm;
+  position: relative; page-break-after: always; break-after: page;
+}
+.page:last-child { page-break-after: auto; break-after: auto; }
+.page + .page { border-top: 1.5px dashed #b8c0cc; }
+
+/* 페이지 번호 (화면용) — 표지 제외 자동 카운터 */
+body { counter-reset: pagenum 0; }
+.page { counter-increment: pagenum; }
+.page:not(:first-of-type)::after {
+  content: "— " counter(pagenum) " —";
+  position: absolute;
+  bottom: 6mm;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: 'Malgun Gothic','Apple SD Gothic Neo',Arial,sans-serif;
+  font-size: 8pt;
+  color: #888;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+@media print {
+  .page:not(:first-of-type)::after { display: none; }
+}
+@media print {
+  html { background: none; }
+  body { width: 100%; margin: 0; box-shadow: none; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page {
+    min-height: 0 !important; padding: 0 !important; border: none !important;
+    page-break-after: always; break-after: page;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  .page + .page { border-top: none !important; }
+
+  /* 섹션 헤더가 페이지 맨 아래에 홀로 남지 않도록 */
+  .sec-h   { break-after: avoid; page-break-after: avoid; }
+  .pg-title { break-after: avoid; page-break-after: avoid; }
+  .legend  { break-after: avoid; page-break-after: avoid; }
+
+  /* 테이블 행이 페이지 중간에서 잘리지 않도록 */
+  .matrix-table tr { break-inside: avoid; page-break-inside: avoid; }
+  .rec-table    tr { break-inside: avoid; page-break-inside: avoid; }
+  .qa-tbl tr      { break-inside: avoid; page-break-inside: avoid; }
+  .ov-table tr    { break-inside: avoid; page-break-inside: avoid; }
+
+  /* 카테고리 구분 행 바로 다음에 페이지 전환 금지 */
+  .matrix-table .cat-cell { break-after: avoid; page-break-after: avoid; }
+
+  /* KPI 블록 전체가 한 페이지에 */
+  .kpi-row { break-inside: avoid; page-break-inside: avoid; }
+
+  /* 갭 분석 카드 개별 박스가 중간에 잘리지 않도록 */
+  .gap-card { break-inside: avoid; page-break-inside: avoid; }
+
+  /* 인사이트 박스가 중간에 잘리지 않도록 */
+  .insight, .insight-warn, .insight-action {
+    break-inside: avoid; page-break-inside: avoid;
+  }
+
+  /* 변화요약 박스도 중간에 잘리지 않게 */
+  .chg-summary { break-inside: avoid; page-break-inside: avoid; }
+
+  /* 푸터가 페이지 첫 줄에 홀로 뜨지 않도록 */
+  .doc-footer { break-before: avoid; page-break-before: avoid; }
+
+  /* 1페이지 구조적 특성 비교표: 행 패딩 축소로 마지막 행이 잘리지 않도록 */
+  .ov-table th { padding: 4px 5px !important; }
+  .ov-table td { padding: 3px 5px !important; }
+
+  /* ─────────────────────────────────────
+     별첨 6장: 좌우 대조(.cmp-wrap) 페이지 타이트닝
+     landscape 사용 높이 182mm 안에 헤더 + 본체 + 변화요약 까지
+     ───────────────────────────────────── */
+  .cmp-wrap { border-spacing: 6px 0 !important; }
+  .cmp-body {
+    /* 화면 정렬용 min-height는 인쇄에서는 페이지 높이 압박 요인 */
+    min-height: 0 !important;
+    padding: 5px 6px 6px !important;
+  }
+  .cmp-head { padding: 5px 9px !important; font-size: 8.6pt !important; }
+
+  /* 미니 문항표 폰트·패딩 축소 (6.8pt 한계 준수) */
+  .qa-tbl     { font-size: 6.9pt !important; }
+  .qa-tbl th  { padding: 2.5px 3px !important; font-size: 6.6pt !important; }
+  .qa-tbl td  { padding: 2px 4px !important; font-size: 6.85pt !important; line-height: 1.3 !important; }
+  .qa-tbl .qn-cell { font-size: 6.85pt !important; }
+  .qa-tbl .dn-cell { font-size: 6.2pt !important; line-height: 1.2 !important; }
+
+  /* 변화 요약 박스 패딩·여백 축소 */
+  .chg-summary {
+    margin-top: 5px !important;
+    padding: 4px 8px !important;
+    font-size: 7.6pt !important;
+    line-height: 1.5 !important;
+  }
+  .chg-summary .chg-row { gap: 5px 10px !important; margin-top: 2px !important; }
+  .chg-summary .chg-tag { font-size: 7pt !important; padding: 0 6px !important; }
+
+  /* 폰트 6pt 이하로 내려가지 않도록 — 아래 스케일·차원 배지 보호용 */
+  .qa-tbl .qt-cell .scale { font-size: 6.05pt !important; }
+}
+
+/* 페이지 타이틀 */
+.pg-title {
+  font-size: 13pt; font-weight: 900; color: #1a3a6b;
+  border-bottom: 2pt solid #1a3a6b; padding-bottom: 6px; margin-bottom: 12px;
+}
+.pg-title small { display:block; font-size:8pt; font-weight:400; color:#9ca3af; margin-top:3px; letter-spacing:1px; }
+
+/* 섹션 헤더 */
+.sec-h {
+  font-size: 10pt; font-weight: 800; color: #1a3a6b;
+  border-left: 4px solid #1a3a6b; padding-left: 9px;
+  margin: 10px 0 6px;
+}
+
+/* KPI 행 */
+.kpi-row { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; margin-bottom:14px; }
+.kpi { background:#f8f9fb; border-top:3px solid #1a3a6b; padding:7px 8px; text-align:center; }
+.kpi.ugrp { border-top-color:#7c3aed; }
+.kpi.lab  { border-top-color:#0891b2; }
+.kpi.tl   { border-top-color:#0d9488; }
+.kpi.grad { border-top-color:#d97706; }
+.kpi.pgr  { border-top-color:#dc2626; }
+.kpi.imp  { border-top-color:#16a34a; background:#f0fdf4; }
+.kpi .val { font-size:16pt; font-weight:900; color:#1a3a6b; line-height:1.1; }
+.kpi.ugrp .val { color:#7c3aed; }
+.kpi.lab  .val { color:#0891b2; }
+.kpi.tl   .val { color:#0d9488; }
+.kpi.grad .val { color:#d97706; }
+.kpi.pgr  .val { color:#dc2626; }
+.kpi.imp  .val { color:#16a34a; }
+.kpi .lbl { font-size:7pt; color:#6b7280; margin-top:2px; line-height:1.4; }
+.kpi .sub { font-size:6.5pt; color:#9ca3af; margin-top:1px; }
+
+/* 메인 비교 매트릭스 테이블 */
+.matrix-table {
+  width: 100%; border-collapse: collapse; font-size: 7.8pt;
+  table-layout: fixed; margin-bottom: 12px;
+}
+.matrix-table th {
+  background: #1a3a6b; color: #fff; padding: 5px 4px;
+  text-align: center; font-weight: 700; font-size: 7.5pt;
+  line-height: 1.3;
+}
+.matrix-table th.ugrp { background: #5b21b6; }
+.matrix-table th.lab  { background: #0e7490; }
+.matrix-table th.tl   { background: #0f766e; }
+.matrix-table th.grad { background: #b45309; }
+.matrix-table th.pgr  { background: #b91c1c; }
+.matrix-table th.imp  { background: #15803d; }
+.matrix-table td {
+  padding: 4px 5px; border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle; line-height: 1.35;
+}
+.matrix-table tr:nth-child(even) td { background: #f8f9fb; }
+.matrix-table .cat-cell {
+  background: #eef3fb !important; font-weight: 800; color: #1a3a6b;
+  font-size: 7.5pt; padding: 5px 6px; border-bottom: 1px solid #c7d2e8;
+}
+.matrix-table .q-cell { font-size: 8pt; color: #374151; word-break: keep-all; }
+
+/* 셀 상태 표시 */
+.c-yes   { text-align:center; font-weight:800; color:#15803d; font-size:8pt; }
+.c-mod   { text-align:center; font-weight:800; color:#d97706; font-size:8pt; }
+.c-del   { text-align:center; font-weight:800; color:#b91c1c; font-size:8pt; }
+.c-new   { text-align:center; font-weight:800; color:#16a34a; font-size:8pt; background:#f0fdf4; }
+.c-no    { text-align:center; color:#d1d5db; font-size:7.5pt; }
+.c-uniq  { text-align:center; font-weight:700; color:#7c3aed; font-size:7.5pt; background:#f5f3ff; }
+
+/* 범례 */
+.legend { display:flex; gap:10px; flex-wrap:wrap; font-size:7.5pt; margin-bottom:10px; align-items:center; }
+.leg-item { display:flex; align-items:center; gap:4px; }
+.leg-dot { width:18px; height:16px; border-radius:2px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:8pt; }
+
+/* 갭 분석 카드 */
+.gap-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px; }
+.gap-card { border:1px solid #e5e7eb; border-radius:2px; padding:6px 9px; }
+.gap-card .gc-title { font-size:8.5pt; font-weight:800; color:#1a3a6b; margin-bottom:4px; padding-bottom:3px; border-bottom:1.5px solid #e5e7eb; display:flex; align-items:center; gap:6px; }
+.gc-badge { display:inline-block; padding:1px 7px; border-radius:10px; font-size:7pt; font-weight:700; color:#fff; }
+.gap-card ul { list-style:none; padding:0; }
+.gap-card li { font-size:7.5pt; color:#374151; padding:1px 0 1px 11px; position:relative; line-height:1.45; }
+.gap-card li:before { content:"·"; position:absolute; left:3px; font-weight:900; color:#1a3a6b; }
+.gap-card li.add:before { color:#16a34a; content:"＋"; }
+.gap-card li.del:before { color:#dc2626; content:"✕"; }
+.gap-card li.mod:before { color:#d97706; content:"≈"; }
+.gap-card li.warn:before { color:#dc2626; content:"⚠"; }
+
+/* 인사이트 박스 */
+.insight { background:#eef3fb; border-left:4px solid #1a3a6b; padding:7px 11px; margin:7px 0; font-size:8.5pt; line-height:1.65; }
+.insight strong { color:#1a3a6b; }
+.insight-warn { background:#fef2f2; border-left:4px solid #dc2626; padding:7px 11px; margin:7px 0; font-size:8.5pt; line-height:1.65; }
+.insight-warn strong { color:#991b1b; }
+.insight-action { background:#edfaf3; border-left:4px solid #16a34a; padding:7px 11px; margin:7px 0; font-size:8.5pt; line-height:1.65; }
+.insight-action strong { color:#065f46; }
+
+/* 페이지 푸터 */
+.doc-footer { text-align:center; color:#9ca3af; font-size:7.5pt; margin-top:10px; padding-top:8px; border-top:1px solid #e5e7eb; }
+
+/* 구조 비교 그리드 */
+.struct-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:12px; }
+.struct-card { border:1px solid #e5e7eb; border-radius:2px; padding:8px 10px; }
+.sc-head { font-size:8pt; font-weight:800; margin-bottom:6px; padding-bottom:4px; border-bottom:2px solid; }
+.sc-q { font-size:7.3pt; color:#374151; padding:2px 0; border-bottom:1px solid #f1f5f9; line-height:1.4; display:flex; gap:4px; }
+.sc-q .qn { color:#6b7280; flex-shrink:0; width:18px; }
+.sc-q.del { color:#b91c1c; text-decoration:line-through; opacity:0.7; }
+.sc-q.mod { color:#92400e; font-weight:600; }
+.sc-q.new { color:#15803d; font-weight:700; }
+.sc-q.uniq { color:#5b21b6; }
+.sc-head.t   { border-color:#1a3a6b; color:#1a3a6b; }
+.sc-head.u   { border-color:#5b21b6; color:#5b21b6; }
+.sc-head.lab { border-color:#0e7490; color:#0e7490; }
+.sc-head.tl  { border-color:#0f766e; color:#0f766e; }
+.sc-head.g   { border-color:#b45309; color:#b45309; }
+.sc-head.pg  { border-color:#b91c1c; color:#b91c1c; }
+
+/* 설문지 별첨 공통 클래스 */
+.sv-rc  { text-align:center; color:#c0cad8; font-size:12pt; padding:3px; border-bottom:1px solid #e5e7eb; }
+.sv-qn  { text-align:center; padding:3px 2px; font-weight:800; color:#1a3a6b; border-bottom:1px solid #e5e7eb; }
+.sv-dn  { text-align:center; padding:3px 2px; border-bottom:1px solid #e5e7eb; }
+.sv-qt  { padding:3px 8px; line-height:1.35; border-bottom:1px solid #e5e7eb; }
+.sv-yn  { text-align:center; font-size:8pt; padding:3px 6px; border-bottom:1px solid #e5e7eb; color:#374151; }
+.sv-sel { padding:3px 8px; font-size:7.3pt; color:#374151; border-bottom:1px solid #e5e7eb; }
+.bd     { display:inline-block; font-size:6.3pt; font-weight:700; padding:1px 4px; border-radius:2px; }
+.bd-adm { background:#f3f4f6; color:#6b7280; border:1px solid #e2e8f0; }
+.bd-d1  { background:#fef3c7; color:#92400e; }
+.bd-d2  { background:#dbeafe; color:#1e40af; }
+.bd-d3  { background:#ccfbf1; color:#0f766e; }
+.bd-d4  { background:#f1f5f9; color:#475569; }
+.bd-d5  { background:#ede9fe; color:#5b21b6; }
+.bd-d6s { background:#d1fae5; color:#065f46; }
+.bd-ug  { background:#f5f3ff; color:#5b21b6; }
+.bd-lab { background:#ecfeff; color:#0e7490; }
+
+/* 개선 권고 테이블 */
+.rec-table { width:100%; border-collapse:collapse; font-size:7.8pt; margin-bottom:8px; }
+.rec-table th { background:#1a3a6b; color:#fff; padding:4px 6px; font-weight:700; font-size:7.5pt; }
+.rec-table td { padding:4px 6px; border-bottom:1px solid #e5e7eb; vertical-align:top; line-height:1.45; }
+.rec-table tr:nth-child(even) td { background:#f8f9fb; }
+.rec-table .type-cell { font-weight:700; font-size:7.5pt; }
+.pri-h { display:inline-block; padding:1px 7px; border-radius:10px; font-size:7pt; font-weight:700; }
+.pri-h.high { background:#fee2e2; color:#b91c1c; }
+.pri-h.mid  { background:#fef3c7; color:#92400e; }
+.pri-h.low  { background:#dcfce7; color:#15803d; }
+
+/* ══════════════════════════════════════
+   표지 / 발행 정보 / 핵심 요약
+══════════════════════════════════════ */
+.cover {
+  min-height: 180mm;
+  padding: 6mm 18mm 0;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+}
+.cover-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.cover-org-name { font-size: 15pt; font-weight: 900; color: #1a3a6b; letter-spacing: 3px; }
+.cover-org-sub { font-size: 9.5pt; color: #6b7280; margin-top: 4px; }
+.cover-rule { height: 3px; background: linear-gradient(to right, #1a3a6b 60%, #4a7fc1); margin: 22px 0 40px; }
+.cover-doc-label { font-size: 9.5pt; font-weight: 700; color: #1a3a6b; letter-spacing: 5px; margin-bottom: 18px; }
+.cover-title-main { font-size: 30pt; font-weight: 900; color: #111827; line-height: 1.22; letter-spacing: -0.5px; margin-bottom: 12px; }
+.cover-title-en { font-size: 11pt; color: #9ca3af; font-style: italic; margin-bottom: 36px; }
+
+.cover-meta {
+  width: 70%; border-collapse: collapse; font-size: 10pt; margin-top: 4px;
+}
+.cover-meta td {
+  padding: 8px 0 8px 2px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top; background: transparent !important;
+}
+.cover-meta tr:first-child td { border-top: 1px solid #e5e7eb; }
+.cover-meta td:first-child { width: 130px; color: #9ca3af; font-size: 9.5pt; }
+.cover-meta td:last-child { color: #1c1c2e; font-weight: 500; }
+
+.cover-bottom {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-top: 14px;
+}
+.cover-stamp {
+  display: inline-block;
+  border: 1.5px solid #1a3a6b; color: #1a3a6b;
+  font-size: 9pt; font-weight: 700; padding: 4px 14px; letter-spacing: 1.5px;
+}
+.cover-ctl { text-align: right; font-size: 10pt; color: #6b7280; line-height: 1.7; }
+.cover-ctl strong { color: #1a3a6b; font-weight: 800; }
+
+.cover-changelog {
+  margin-top: 22px; padding: 12px 18px;
+  background: #f0f5fb; border-left: 4px solid #1a3a6b;
+  width: 70%;
+}
+.cover-changelog .ch-title {
+  font-size: 9.5pt; font-weight: 800; color: #1a3a6b;
+  margin-bottom: 5px; letter-spacing: 0.5px;
+}
+.cover-changelog ul { list-style: none; padding: 0; margin: 0; }
+.cover-changelog li { padding: 1.5px 0; font-size: 9pt; line-height: 1.6; color: #1f2937; }
+.cover-changelog li strong { color: #1a3a6b; }
+
+/* 목차 */
+.page-title-large {
+  font-size: 17pt; font-weight: 900; color: #1a3a6b;
+  letter-spacing: -0.5px;
+  border-bottom: 2.5pt solid #1a3a6b;
+  padding-bottom: 8px; margin-bottom: 16px;
+}
+.page-title-large small {
+  display: block; font-size: 9.5pt; font-weight: 500;
+  color: #9ca3af; letter-spacing: 1.5px; margin-top: 5px;
+}
+.toc-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
+.toc { list-style: none; padding: 0; margin: 0; }
+.toc li {
+  display: flex; align-items: baseline;
+  font-size: 10pt; padding: 5px 4px;
+  border-bottom: 1px dotted #d1d5db;
+}
+.toc li .num { width: 40px; flex-shrink: 0; font-weight: 800; color: #1a3a6b; }
+.toc li .label { flex: 1; color: #1f2937; word-break: keep-all; padding-right: 8px; }
+.toc li .dots { flex: 1; border-bottom: 1px dotted #cbd5e1; margin: 0 10px; transform: translateY(-3px); }
+.toc li .pg { width: 36px; text-align: right; color: #6b7280; font-size: 10pt; flex-shrink: 0; }
+
+/* 핵심 요약 박스 */
+.exec-summary { margin-top: 12px; }
+.exec-summary h3 {
+  font-size: 11pt; font-weight: 800; color: #1a3a6b;
+  margin-bottom: 7px; padding-left: 12px; border-left: 4px solid #1a3a6b;
+}
+.exec-list { list-style: none; padding: 0; margin: 0 0 10px; }
+.exec-list li {
+  position: relative; padding: 4px 4px 4px 22px;
+  font-size: 9.5pt; line-height: 1.65;
+  border-bottom: 1px solid #f1f5f9;
+  word-break: keep-all;
+}
+.exec-list li:before {
+  content: "▸"; position: absolute; left: 4px; top: 5px;
+  color: #1a3a6b; font-weight: 800;
+}
+.exec-list li strong { color: #1a3a6b; }
+
+/* 발행 정보 */
+.colophon-grid {
+  display: grid; grid-template-columns: 130px 1fr;
+  row-gap: 9px; column-gap: 18px;
+  font-size: 9.8pt; line-height: 1.7;
+}
+.colophon-grid .lbl { color: #9ca3af; font-size: 9pt; }
+.colophon-grid .cite-box {
+  background: #f8f9fb; padding: 10px 14px;
+  border-left: 3px solid #1a3a6b; font-size: 9.3pt; line-height: 1.7;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     페이지 1 — 표지
+════════════════════════════════════ -->
+<section class="page">
+<div class="cover">
+  <div>
+    <div class="cover-top">
+      <div>
+        <div class="cover-org-name">DGIST 교수학습센터(CTL)</div>
+      </div>
+    </div>
+    <div class="cover-rule"></div>
+
+    <div class="cover-title-main">강의평가 유형별<br>현행·개선안 비교분석 보고서<span style="font-size:13pt; background:#e0e7ff; color:#1a3a6b; padding:4px 12px; border-radius:3px; margin-left:12px; vertical-align:9px; letter-spacing:0; font-weight:700;">v1.0</span></div>
+    <div class="cover-title-en">Course Evaluation by Survey Type — Current vs. Proposed Mapping &amp; Gap Analysis</div>
+
+
+  </div>
+
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     페이지 2 — 목차 + 핵심 요약
+════════════════════════════════════ -->
+<section class="page">
+<div class="page-title-large">
+  목차 · 핵심 요약
+  <small>CONTENTS &amp; EXECUTIVE SUMMARY</small>
+</div>
+
+<div class="toc-2col">
+  <ul class="toc">
+    <li><span class="num">1.</span><span class="label">문항 수 현황 &amp; 유형별 구조 비교</span><span class="dots"></span><span class="pg">3</span></li>
+    <li><span class="num">2.</span><span class="label">전체 문항 매핑 매트릭스 (6×7)</span><span class="dots"></span><span class="pg">4</span></li>
+    <li><span class="num">3.</span><span class="label">유형별 갭 분석 &amp; 우선순위 권고</span><span class="dots"></span><span class="pg">5</span></li>
+  </ul>
+  <ul class="toc">
+    <li><span class="num">별첨1</span><span class="label">대학 교과이론 — 현행(14) vs 개선안(18)</span><span class="dots"></span><span class="pg">6</span></li>
+    <li><span class="num">별첨2</span><span class="label">대학 교과UGRP — 현행(11) vs 개선안(14)</span><span class="dots"></span><span class="pg">7</span></li>
+    <li><span class="num">별첨3</span><span class="label">대학 실험실습분야 — 현행(15) vs 개선안(17)</span><span class="dots"></span><span class="pg">8</span></li>
+    <li><span class="num">별첨4</span><span class="label">대학 이론실습 — 현행(16) vs 개선안(18)</span><span class="dots"></span><span class="pg">9</span></li>
+    <li><span class="num">별첨5</span><span class="label">대학원 — 현행(12) vs 개선안(15)</span><span class="dots"></span><span class="pg">10</span></li>
+    <li><span class="num">별첨6</span><span class="label">전문대학원 — 현행(12) vs 개선안(15)</span><span class="dots"></span><span class="pg">11</span></li>
+  </ul>
+</div>
+
+<div class="exec-summary">
+  <h3>핵심 요약 (Executive Summary)</h3>
+
+  <ul class="exec-list">
+    <li><strong>분석 목적</strong> 본 보고서는 동반 문서인 「강의평가 지표 개선방안 보고서 v1.0」이 제안한 18문항 개선안을 기준점으로, DGIST 현행 6종 강의평가 설문이 어디서 일치·근접·결손되는지를 한눈에 보여준다. 즉 <em>개선안의 영향 범위</em>를 유형별로 정량화한다.</li>
+    <li><strong>핵심 발견 ①</strong> 현행 6종 모두 <strong>수업계획서 등록(Q1) 행정 항목</strong>을 포함 — 교수법 역량과 무관하므로 일제히 삭제 권고. 즉시·전면·저비용 조치.</li>
+    <li><strong>핵심 발견 ②</strong> 대학원과 <strong>전문대학원이 완전 동일 설문</strong>을 사용 중 — 학습 맥락 차이가 전혀 반영되지 않아 즉시 분리 필요. UGRP는 구조가 달라 별도 프레임 필요.</li>
+    <li><strong>핵심 발견 ③</strong> 개선안의 <strong>DGIST 정체성 신규 3문항(N1 CA 정렬·N2 정보 신뢰성 검증·N3 연구 연계)</strong>은 6종 모두에 부재. 연구중심대학 정체성을 측정하는 차원이 현 체계 전체에 누락되어 있음.</li>
+    <li><strong>핵심 발견 ④</strong> <strong>D7 학습 주체성(Learning Agency) 차원 신설(N4·N5·N6·N7)</strong> — 학습자가 외부 자원·도구를 비판적으로 선택·활용하고, 평가 진정성을 확인하며, 인간 고유의 사고를 형성하는 차원이 6종 모두에 부재. 개선안에서 측정 차원으로 새로 도입(OECD Learning Compass 2030 근거).</li>
+    <li><strong>핵심 발견 ⑤</strong> <strong>교수자 열정·피드백·학습 성과</strong> 3개 문항은 6종 중 5종에 공통 존재하나 표현이 정의적·모호함 — 개선안에서 행동 기술·실질 도움·역량 향상으로 일제 정비 권고.</li>
+    <li><strong>적용 우선순위</strong> P1 즉시(2026-2학기): Q1 삭제·전문대학원 분리·3문항 표현 수정 / P2 단기(2027-1학기): DGIST 정체성 신규 3문항(N1·N2·N3) 및 학습 주체성 4문항(N4·N5·N6·N7) 단계 도입·실험·이론실습 이중구조 / P3 중기(2027-2학기): UGRP·대학원 전용 프레임 개발.</li>
+  </ul>
+
+  <div style="margin-top:8px; padding:8px 14px; background:#1a3a6b; color:#fff; font-size:9pt; line-height:1.6; border-radius:2px;">
+    <strong style="color:#fde68a;">▣ 본 보고서의 위치</strong> ·
+    본 비교분석은 「분석 보고서 v1.0」(원인 진단)과 「개선방안 보고서 v1.0」(처방 설계)을 잇는 <em>실행 매핑 자료</em>이다.
+    개선방안의 권고가 6종 설문 각각에서 어떻게 작동하는지 보여주어, 부서별·유형별 적용 의사결정을 직접 지원한다.
+  </div>
+</div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     페이지 3 — 문항 수 현황 + 구조 비교
+════════════════════════════════════ -->
+<section class="page">
+
+<div class="page-title-large" style="margin-bottom:10px;">1. 문항 수 현황 &amp; 유형별 구조 비교
+  <small>QUESTION COUNT OVERVIEW &amp; STRUCTURAL COMPARISON</small>
+</div>
+
+<!-- 문항 수 KPI -->
+<div class="sec-h">문항 수 현황 (정량 기준)</div>
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="val">12</div>
+    <div class="lbl">대학<br>교과이론</div>
+    <div class="sub">+2 주관식 = 14</div>
+  </div>
+  <div class="kpi ugrp">
+    <div class="val">9</div>
+    <div class="lbl">대학<br>UGRP</div>
+    <div class="sub">+2 주관식 = 11</div>
+  </div>
+  <div class="kpi lab">
+    <div class="val">13</div>
+    <div class="lbl">대학<br>실험실습</div>
+    <div class="sub">+2 주관식 = 15</div>
+  </div>
+  <div class="kpi tl">
+    <div class="val">14</div>
+    <div class="lbl">대학<br>이론실습</div>
+    <div class="sub">+2 주관식 = 16</div>
+  </div>
+  <div class="kpi grad">
+    <div class="val">10</div>
+    <div class="lbl">대학원</div>
+    <div class="sub">+2 주관식 = 12</div>
+  </div>
+  <div class="kpi pgr">
+    <div class="val">10</div>
+    <div class="lbl">전문대학원</div>
+    <div class="sub">+2 주관식 = 12</div>
+  </div>
+  <div class="kpi imp">
+    <div class="val">18</div>
+    <div class="lbl">개선안<br>(이론 기준)</div>
+    <div class="sub">+3 주관식 = 21</div>
+  </div>
+</div>
+
+<!-- 1차 인사이트 -->
+<div class="insight">
+  <strong>핵심 발견 4가지 :</strong>
+  ① 대학원·전문대학원 설문이 <strong>완전 동일</strong> — 대학원생과 전문대학원생의 학습 맥락 차이가 전혀 반영되지 않음.
+  ② UGRP만 <strong>완전히 다른 구조</strong>(연구 지도 중심, 9문항) — 나머지 5개 유형과의 비교 불가.
+  ③ 개선안의 <strong>DGIST 정체성 신규 3문항(N1 CA·N2 정보 검증·N3 연구 연계)은 6개 유형 모두에 부재</strong> — 연구중심대학 정체성을 측정하는 차원이 현행에는 없다.
+  ④ <strong>학습 주체성 신규 4문항(N4·N5·N6·N7)</strong>은 외부 학습 자원 활용 시대를 대비한 신설 차원(D7) — 현행 6종 모두에 부재.
+</div>
+
+<!-- 개요 비교표 -->
+<div class="sec-h">유형별 구조적 특성 비교</div>
+<table class="ov-table" style="width:100%; border-collapse:collapse; font-size:8pt;">
+  <thead>
+    <tr style="background:#1a3a6b; color:#fff;">
+      <th style="padding:5px 8px; width:16%; text-align:left;">항목</th>
+      <th style="padding:5px 6px; text-align:center;">대학 이론</th>
+      <th style="padding:5px 6px; text-align:center; background:#5b21b6;">대학 UGRP</th>
+      <th style="padding:5px 6px; text-align:center; background:#0e7490;">대학 실험실습</th>
+      <th style="padding:5px 6px; text-align:center; background:#0f766e;">대학 이론실습</th>
+      <th style="padding:5px 6px; text-align:center; background:#b45309;">대학원</th>
+      <th style="padding:5px 6px; text-align:center; background:#b91c1c;">전문대학원</th>
+      <th style="padding:5px 6px; text-align:center; background:#15803d;">개선안</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">정량 문항 수</td>
+      <td style="text-align:center; padding:5px; font-weight:800;">12</td>
+      <td style="text-align:center; padding:5px; font-weight:800; background:#f5f3ff;">9</td>
+      <td style="text-align:center; padding:5px; font-weight:800; background:#ecfeff;">13</td>
+      <td style="text-align:center; padding:5px; font-weight:800; background:#f0fdfa;">14</td>
+      <td style="text-align:center; padding:5px; font-weight:800; background:#fffbeb;">10</td>
+      <td style="text-align:center; padding:5px; font-weight:800; background:#fef2f2;">10</td>
+      <td style="text-align:center; padding:5px; font-weight:800; color:#15803d; background:#f0fdf4;">18</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">수업계획서 등록</td>
+      <td style="text-align:center; color:#dc2626; font-weight:700; padding:5px;">Q1 ✓</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f5f3ff;">없음</td>
+      <td style="text-align:center; color:#dc2626; font-weight:700; padding:5px; background:#ecfeff;">Q1 ✓</td>
+      <td style="text-align:center; color:#dc2626; font-weight:700; padding:5px; background:#f0fdfa;">Q1 ✓</td>
+      <td style="text-align:center; color:#dc2626; font-weight:700; padding:5px; background:#fffbeb;">Q1 ✓</td>
+      <td style="text-align:center; color:#dc2626; font-weight:700; padding:5px; background:#fef2f2;">Q1 ✓</td>
+      <td style="text-align:center; color:#b91c1c; font-weight:800; padding:5px; background:#fef2f2;">→ 삭제</td>
+    </tr>
+    <tr>
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">학습자 자기보고</td>
+      <td style="text-align:center; padding:5px;">Q4<br><span style="font-size:7pt; color:#9ca3af;">Yes/No</span></td>
+      <td style="text-align:center; padding:5px; background:#f5f3ff;">Q1+Q2<br><span style="font-size:7pt; color:#9ca3af;">5점</span></td>
+      <td style="text-align:center; padding:5px; background:#ecfeff;">Q4<br><span style="font-size:7pt; color:#9ca3af;">Yes/No</span></td>
+      <td style="text-align:center; padding:5px; background:#f0fdfa;">Q4<br><span style="font-size:7pt; color:#9ca3af;">Yes/No</span></td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fffbeb;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fef2f2;">없음</td>
+      <td style="text-align:center; color:#15803d; font-weight:700; padding:5px; background:#f0fdf4;">Q3 유지</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">학습 시간 투자</td>
+      <td style="text-align:center; padding:5px;">Q6 ✓</td>
+      <td style="text-align:center; padding:5px; background:#f5f3ff;">Q3 ✓</td>
+      <td style="text-align:center; padding:5px; background:#ecfeff;">Q7 ✓</td>
+      <td style="text-align:center; padding:5px; background:#f0fdfa;">Q5 ✓</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fffbeb;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fef2f2;">없음</td>
+      <td style="text-align:center; color:#15803d; font-weight:700; padding:5px; background:#f0fdf4;">Q5 유지</td>
+    </tr>
+    <tr>
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">능동학습 참여 유도</td>
+      <td style="text-align:center; padding:5px;">Q3 ✓</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f5f3ff;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#ecfeff;">없음</td>
+      <td style="text-align:center; padding:5px; background:#f0fdfa;">Q3 ✓</td>
+      <td style="text-align:center; padding:5px; background:#fffbeb;">Q3 ✓</td>
+      <td style="text-align:center; padding:5px; background:#fef2f2;">Q3 ✓</td>
+      <td style="text-align:center; color:#15803d; font-weight:700; padding:5px; background:#f0fdf4;">Q2 유지</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">실험 특화 문항</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f5f3ff;">없음</td>
+      <td style="text-align:center; font-weight:700; color:#0e7490; padding:5px; background:#ecfeff;">2개<br><span style="font-size:6.5pt; font-weight:400;">(난이도·원리이해)</span></td>
+      <td style="text-align:center; font-weight:700; color:#0f766e; padding:5px; background:#f0fdfa;">2개<br><span style="font-size:6.5pt; font-weight:400;">(난이도·원리이해)</span></td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fffbeb;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fef2f2;">없음</td>
+      <td style="text-align:center; color:#9ca3af; font-size:7.5pt; padding:5px; background:#f0fdf4;">미반영<br><span style="font-size:6.5pt;">(유형특화 필요)</span></td>
+    </tr>
+    <tr>
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">UGRP 연구 특화</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px;">없음</td>
+      <td style="text-align:center; font-weight:700; color:#5b21b6; padding:5px; background:#f5f3ff;">5개<br><span style="font-size:6.5pt; font-weight:400;">(동기·진로·안전 등)</span></td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#ecfeff;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f0fdfa;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fffbeb;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fef2f2;">없음</td>
+      <td style="text-align:center; color:#9ca3af; font-size:7.5pt; padding:5px; background:#f0fdf4;">미반영<br><span style="font-size:6.5pt;">(유형특화 필요)</span></td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">CA 정렬 (신규)</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f5f3ff;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#ecfeff;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f0fdfa;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fffbeb;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fef2f2;">없음</td>
+      <td style="text-align:center; color:#15803d; font-weight:800; font-size:8pt; padding:5px; background:#f0fdf4;">★ 신규</td>
+    </tr>
+    <tr>
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">정보·답변 신뢰성 검증 (신규)</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f5f3ff;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#ecfeff;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f0fdfa;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fffbeb;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fef2f2;">없음</td>
+      <td style="text-align:center; color:#15803d; font-weight:800; font-size:8pt; padding:5px; background:#f0fdf4;">★ 신규</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">연구 연계 (신규)</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px;">없음</td>
+      <td style="text-align:center; padding:5px; background:#f5f3ff; font-size:7.5pt;">유사<br>(Q6 원리이해)</td>
+      <td style="text-align:center; padding:5px; background:#ecfeff; font-size:7.5pt;">유사<br>(Q5 원리이해)</td>
+      <td style="text-align:center; padding:5px; background:#f0fdfa; font-size:7.5pt;">유사<br>(Q7 원리이해)</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fffbeb;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fef2f2;">없음</td>
+      <td style="text-align:center; color:#15803d; font-weight:800; font-size:8pt; padding:5px; background:#f0fdf4;">★ 신규</td>
+    </tr>
+    <tr>
+      <td style="padding:5px 8px; font-weight:700; color:#374151;">D7 학습 주체성 4문항 (신규)<br><span style="font-size:7pt; font-weight:400; color:#6b7280;">자원 선택·평가 진정성·인간 고유 사고·수업 외 학습</span></td>
+      <td style="text-align:center; color:#9ca3af; padding:5px;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f5f3ff;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#ecfeff;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#f0fdfa;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fffbeb;">없음</td>
+      <td style="text-align:center; color:#9ca3af; padding:5px; background:#fef2f2;">없음</td>
+      <td style="text-align:center; color:#15803d; font-weight:800; font-size:8pt; padding:5px; background:#f0fdf4;">★ 4개 신규<br>(N4·N5·N6·N7)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 2026년 5월 8일</div>
+</section>
+
+
+<!-- ══ 페이지 2 — 전체 문항 매핑 매트릭스 ══ -->
+<section class="page">
+
+<div class="pg-title">전체 문항 매핑 매트릭스
+  <small>FULL ITEM MAPPING MATRIX — 현행 6개 유형 × 개선안 대응 관계</small>
+</div>
+
+<div class="legend" style="margin-bottom:8px;">
+  <div class="leg-item"><div class="leg-dot" style="background:#dcfce7; color:#15803d;">Q</div><span>현행 있음 (유지)</span></div>
+  <div class="leg-item"><div class="leg-dot" style="background:#fef3c7; color:#92400e;">≈</div><span>유사 있음 (수정)</span></div>
+  <div class="leg-item"><div class="leg-dot" style="background:#fee2e2; color:#b91c1c;">✕</div><span>개선안에서 삭제</span></div>
+  <div class="leg-item"><div class="leg-dot" style="background:#f0fdf4; color:#15803d;">★</div><span>개선안 신규 (현행 없음)</span></div>
+  <div class="leg-item"><div class="leg-dot" style="background:#f5f3ff; color:#5b21b6;">U</div><span>UGRP 유형 특화</span></div>
+  <div class="leg-item"><div class="leg-dot" style="background:#ecfeff; color:#0e7490;">L</div><span>실험 유형 특화</span></div>
+  <div class="leg-item"><div class="leg-dot" style="background:#f3f4f6; color:#9ca3af;">—</div><span>해당 없음</span></div>
+</div>
+
+<table class="matrix-table">
+  <colgroup>
+    <col style="width:28%">
+    <col style="width:10%">
+    <col style="width:10%">
+    <col style="width:11%">
+    <col style="width:11%">
+    <col style="width:10%">
+    <col style="width:10%">
+    <col style="width:10%">
+  </colgroup>
+  <thead>
+    <tr>
+      <th style="text-align:left; padding:5px 8px;">문항 개념</th>
+      <th>대학<br>이론</th>
+      <th class="ugrp">대학<br>UGRP</th>
+      <th class="lab">대학<br>실험실습</th>
+      <th class="tl">대학<br>이론실습</th>
+      <th class="grad">대학원</th>
+      <th class="pgr">전문<br>대학원</th>
+      <th class="imp">개선안<br>(이론기준)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- 행정 -->
+    <tr><td class="cat-cell" colspan="8">▸ 행정·절차</td></tr>
+    <tr>
+      <td class="q-cell">수업계획서 정해진 기간에 등록</td>
+      <td class="c-del">Q1 ✕</td>
+      <td class="c-no">—</td>
+      <td class="c-del">Q1 ✕</td>
+      <td class="c-del">Q1 ✕</td>
+      <td class="c-del">Q1 ✕</td>
+      <td class="c-del">Q1 ✕</td>
+      <td class="c-del" style="background:#fef2f2;">→ 삭제</td>
+    </tr>
+    <!-- 수업 설계 -->
+    <tr><td class="cat-cell" colspan="8">▸ D2 수업 설계·정렬</td></tr>
+    <tr>
+      <td class="q-cell">수업이 강의 목표·계획에 부합하여 체계적 진행</td>
+      <td class="c-yes">Q2</td>
+      <td class="c-no">—</td>
+      <td class="c-yes">Q2</td>
+      <td class="c-yes">Q2</td>
+      <td class="c-yes">Q2</td>
+      <td class="c-yes">Q2</td>
+      <td class="c-new">① 유지</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell">수업자료·교재가 내용 이해에 도움</td>
+      <td class="c-yes">Q9</td>
+      <td class="c-no">—</td>
+      <td class="c-yes">Q13</td>
+      <td class="c-yes">Q11</td>
+      <td class="c-yes">Q7</td>
+      <td class="c-yes">Q7</td>
+      <td class="c-new">⑧ 유지</td>
+    </tr>
+    <tr>
+      <td class="q-cell" style="color:#15803d; font-weight:700;">★ 수업 목표·내용·평가 일관성 (CA 정렬)</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-new">⑫ 신규</td>
+    </tr>
+    <!-- 능동 학습 -->
+    <tr><td class="cat-cell" colspan="8">▸ D5 교수 효과성 · 능동학습</td></tr>
+    <tr>
+      <td class="q-cell">다양한 방법으로 적극적 수업 참여 유도</td>
+      <td class="c-yes">Q3</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-yes">Q3</td>
+      <td class="c-yes">Q3</td>
+      <td class="c-yes">Q3</td>
+      <td class="c-new">② 유지</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell">수업내용이 이해하기 쉽고 명확하게 전달</td>
+      <td class="c-yes">Q8</td>
+      <td class="c-no">—</td>
+      <td class="c-yes">Q12</td>
+      <td class="c-yes">Q10</td>
+      <td class="c-yes">Q6</td>
+      <td class="c-yes">Q6</td>
+      <td class="c-new">⑦ 유지</td>
+    </tr>
+    <tr>
+      <td class="q-cell">교수자가 성실하고 열정적으로 수업에 임함</td>
+      <td class="c-mod">Q7 ≈</td>
+      <td class="c-no">—</td>
+      <td class="c-mod">Q10 ≈</td>
+      <td class="c-mod">Q9 ≈</td>
+      <td class="c-mod">Q5 ≈</td>
+      <td class="c-mod">Q5 ≈</td>
+      <td class="c-mod" style="background:#fffbeb;">⑥ 수정<br><span style="font-size:6.5pt;">→학습 적극 지원</span></td>
+    </tr>
+    <!-- D1 학습 성과 -->
+    <tr><td class="cat-cell" colspan="8">▸ D1 학습 성과</td></tr>
+    <tr>
+      <td class="q-cell">수업을 통해 이 분야에서 많은 것을 배움</td>
+      <td class="c-mod">Q11 ≈</td>
+      <td class="c-no">—</td>
+      <td class="c-mod">Q9 ≈</td>
+      <td class="c-mod">Q13 ≈</td>
+      <td class="c-mod">Q9 ≈</td>
+      <td class="c-mod">Q9 ≈</td>
+      <td class="c-mod" style="background:#fffbeb;">⑩ 수정<br><span style="font-size:6.5pt;">→역량 실질 향상</span></td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell">나는 이 수업에 성실하게 참여 (학습자 자기보고)</td>
+      <td class="c-yes">Q4<br><span style="font-size:6.5pt; color:#9ca3af;">Yes/No</span></td>
+      <td class="c-uniq">Q2<br><span style="font-size:6.5pt;">5점척도</span></td>
+      <td class="c-yes">Q4<br><span style="font-size:6.5pt; color:#9ca3af;">Yes/No</span></td>
+      <td class="c-yes">Q4<br><span style="font-size:6.5pt; color:#9ca3af;">Yes/No</span></td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-new">③ 유지</td>
+    </tr>
+    <!-- D3 학습 환경 -->
+    <tr><td class="cat-cell" colspan="8">▸ D3 학습 환경·피드백</td></tr>
+    <tr>
+      <td class="q-cell">교수자에게 질문·도움 요청이 수월</td>
+      <td class="c-yes">Q5</td>
+      <td class="c-yes">Q7</td>
+      <td class="c-yes">Q8</td>
+      <td class="c-yes">Q8</td>
+      <td class="c-yes">Q4</td>
+      <td class="c-yes">Q4</td>
+      <td class="c-new">④ 유지</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell">시험·과제에 대해 적절한 피드백 제공</td>
+      <td class="c-mod">Q10 ≈</td>
+      <td class="c-mod">Q8 ≈</td>
+      <td class="c-mod">Q6 ≈</td>
+      <td class="c-mod">Q12 ≈</td>
+      <td class="c-mod">Q8 ≈</td>
+      <td class="c-mod">Q8 ≈</td>
+      <td class="c-mod" style="background:#fffbeb;">⑨ 수정<br><span style="font-size:6.5pt;">→학습향상 실질도움</span></td>
+    </tr>
+    <!-- D4 부담 관리 -->
+    <tr><td class="cat-cell" colspan="8">▸ D4 부담 관리</td></tr>
+    <tr>
+      <td class="q-cell">수업량 및 과제 분배가 적절</td>
+      <td class="c-yes">Q12</td>
+      <td class="c-no">—</td>
+      <td class="c-yes">Q11</td>
+      <td class="c-yes">Q14</td>
+      <td class="c-yes">Q10</td>
+      <td class="c-yes">Q10</td>
+      <td class="c-new">⑪ 유지</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell">주당 수업 외 학습 시간 (선택형)</td>
+      <td class="c-yes">Q6</td>
+      <td class="c-yes">Q3</td>
+      <td class="c-yes">Q7</td>
+      <td class="c-yes">Q5</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-new">⑤ 유지</td>
+    </tr>
+    <!-- D6 DGIST 특화 -->
+    <tr><td class="cat-cell" colspan="8">▸ D6 DGIST 특화 (개선안 신규)</td></tr>
+    <tr>
+      <td class="q-cell" style="color:#15803d; font-weight:700;">★ 정보·답변의 신뢰성·한계 검증 능력</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-new">⑬ 신규<br><span style="font-size:6.5pt;">(N2)</span></td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell" style="color:#15803d; font-weight:700;">★ 수업 내용이 연구·실제 문제와 연결됨을 이해</td>
+      <td class="c-no">—</td>
+      <td class="c-uniq">Q6<br><span style="font-size:6.5pt;">원리이해(유사)</span></td>
+      <td class="c-uniq" style="background:#ecfeff;">Q5<br><span style="font-size:6.5pt;">원리이해(유사)</span></td>
+      <td class="c-uniq" style="background:#f0fdfa;">Q7<br><span style="font-size:6.5pt;">원리이해(유사)</span></td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-new">⑭ 신규<br><span style="font-size:6.5pt;">(N3)</span></td>
+    </tr>
+    <!-- D7 학습 주체성 -->
+    <tr><td class="cat-cell" colspan="8">▸ D7 학습 주체성 — Learning Agency (개선안 신규 차원)</td></tr>
+    <tr>
+      <td class="q-cell" style="color:#15803d; font-weight:700;">★ 다양한 학습 자원·도구를 스스로 선택·활용하는 안목</td>
+      <td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td>
+      <td class="c-new">⑮ 신규<br><span style="font-size:6.5pt;">(N4)</span></td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell" style="color:#15803d; font-weight:700;">★ 평가가 결과물보다 사고 과정·이해 깊이를 확인</td>
+      <td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td>
+      <td class="c-new">⑯ 신규<br><span style="font-size:6.5pt;">(N5)</span></td>
+    </tr>
+    <tr>
+      <td class="q-cell" style="color:#15803d; font-weight:700;">★ 기계적·표준적 답을 넘어 판단·해석·창의가 필요한 사고</td>
+      <td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td>
+      <td class="c-new">⑰ 신규<br><span style="font-size:6.5pt;">(N6)</span></td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell" style="color:#15803d; font-weight:700;">★ 수업 외 자기주도 학습이 강의 내용과 유기적 연결</td>
+      <td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td>
+      <td class="c-new">⑱ 신규<br><span style="font-size:6.5pt;">(N7)</span></td>
+    </tr>
+    <!-- UGRP 특화 -->
+    <tr><td class="cat-cell" colspan="8">▸ UGRP 전용 문항 (현행만 존재, 개선안 미반영)</td></tr>
+    <tr>
+      <td class="q-cell" style="color:#5b21b6;">연구 사전준비 철저히 하여 참여 (학습자)</td>
+      <td class="c-no">—</td>
+      <td class="c-uniq">Q1</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">미반영</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell" style="color:#5b21b6;">연구 분야 학습 동기 부여·관심도 향상</td>
+      <td class="c-no">—</td>
+      <td class="c-uniq">Q4</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">미반영</td>
+    </tr>
+    <tr>
+      <td class="q-cell" style="color:#5b21b6;">연구 방향·진로 결정에 도움</td>
+      <td class="c-no">—</td>
+      <td class="c-uniq">Q5</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">미반영</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell" style="color:#5b21b6;">실험실 안전/보안 교육·기자재 관리 적절</td>
+      <td class="c-no">—</td>
+      <td class="c-uniq">Q9</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">미반영</td>
+    </tr>
+    <!-- 실험 특화 -->
+    <tr><td class="cat-cell" colspan="8">▸ 실험실습 전용 문항 (현행만 존재, 개선안 미반영)</td></tr>
+    <tr>
+      <td class="q-cell" style="color:#0e7490;">실험/실습 난이도·시간이 적절</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-uniq" style="background:#ecfeff;">Q3</td>
+      <td class="c-uniq" style="background:#f0fdfa;">Q6</td>
+      <td class="c-no">—</td>
+      <td class="c-no">—</td>
+      <td class="c-no">미반영</td>
+    </tr>
+    <!-- 주관식 -->
+    <tr><td class="cat-cell" colspan="8">▸ 주관식</td></tr>
+    <tr>
+      <td class="q-cell">가장 좋았던 점 (자유 서술)</td>
+      <td class="c-yes">Q13</td>
+      <td class="c-yes">Q10</td>
+      <td class="c-yes">Q14</td>
+      <td class="c-yes">Q15</td>
+      <td class="c-yes">Q11</td>
+      <td class="c-yes">Q11</td>
+      <td class="c-new">주1 유지</td>
+    </tr>
+    <tr style="background:#f8f9fb;">
+      <td class="q-cell">개선할 점 (자유 서술)</td>
+      <td class="c-yes">Q14</td>
+      <td class="c-yes">Q11</td>
+      <td class="c-yes">Q15</td>
+      <td class="c-yes">Q16</td>
+      <td class="c-yes">Q12</td>
+      <td class="c-yes">Q12</td>
+      <td class="c-new">주2 유지</td>
+    </tr>
+    <tr>
+      <td class="q-cell" style="color:#15803d; font-weight:700;">★ 강의실 밖 학습 자원 영향 (자유 서술)</td>
+      <td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td><td class="c-no">—</td>
+      <td class="c-new">주3 신규</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="insight-warn" style="margin-top:4px;">
+  <strong>구조적 경보 :</strong>
+  대학원과 전문대학원이 완전히 동일한 설문 사용. Q4(학습자 자기보고)와 Q6(학습시간)이 없어 학습자 참여 맥락 파악 불가.
+  UGRP는 설문 체계가 나머지 5개 유형과 달라 기관 단위 비교 자체가 불가능.
+  <strong>D7 학습 주체성 차원(N4·N5·N6·N7)은 6종 모두에 부재</strong> — 외부 학습 자원 활용이 보편화되는 환경에서 측정 차원의 결손이 가장 큼.
+</div>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 2026년 5월 8일</div>
+</section>
+
+
+<!-- ══ 페이지 3 — 유형별 갭 분석 + 개선 권고 ══ -->
+<section class="page">
+
+<div class="pg-title">유형별 갭 분석 및 개선 권고
+  <small>GAP ANALYSIS &amp; TYPE-SPECIFIC RECOMMENDATIONS</small>
+</div>
+
+<div class="sec-h">유형별 갭 분석 — 개선안(이론 기준) 대비 현행 각 유형의 결손·잉여</div>
+<div class="gap-grid">
+
+  <!-- 이론 -->
+  <div class="gap-card">
+    <div class="gc-title">
+      <span class="gc-badge" style="background:#1a3a6b;">이론</span>
+      대학 교과이론
+    </div>
+    <ul>
+      <li class="del">수업계획서 등록 Q1 → 삭제 필요</li>
+      <li class="mod">교수자 열정(Q7) → 학습지원으로 수정</li>
+      <li class="mod">피드백(Q10) → 학습향상 실질 도움으로 수정</li>
+      <li class="mod">학습성과(Q11) → 역량 실질 향상으로 수정</li>
+      <li class="add">N1 CA 정렬·N2 정보 검증·N3 연구 연계 신규 추가</li>
+      <li class="add">D7 학습 주체성 4문항(N4·N5·N6·N7) 신규 추가</li>
+      <li style="color:#16a34a;">→ 개선안과 가장 근접, 변경 최소</li>
+    </ul>
+  </div>
+
+  <!-- UGRP -->
+  <div class="gap-card" style="border-color:#c4b5fd;">
+    <div class="gc-title">
+      <span class="gc-badge" style="background:#5b21b6;">UGRP</span>
+      대학 교과 UGRP
+    </div>
+    <ul>
+      <li class="warn">구조가 완전히 달라 개선안 직접 적용 불가</li>
+      <li>공통 기반(목표부합·접근성·피드백) 없음</li>
+      <li>교수자 열정·전달 명확성·부담관리 없음</li>
+      <li class="add">연구 지도형 특화 문항 별도 유지 필요</li>
+      <li class="add">N1 CA·N2 검증·N3 연구 연계 신규 추가 검토</li>
+      <li class="add">D7 학습 주체성 4문항 도입 (UGRP 자율학습 적합)</li>
+      <li class="add">연구동기·진로연계 → DGIST 특화로 재분류</li>
+      <li style="color:#dc2626;">→ 별도 개선 프레임 설계 필요</li>
+    </ul>
+  </div>
+
+  <!-- 실험실습 -->
+  <div class="gap-card" style="border-color:#a5f3fc;">
+    <div class="gc-title">
+      <span class="gc-badge" style="background:#0e7490;">실험실습</span>
+      대학 실험실습
+    </div>
+    <ul>
+      <li class="del">수업계획서 등록 Q1 → 삭제 필요</li>
+      <li class="mod">교수자 열정(Q10) → 학습지원으로 수정</li>
+      <li class="mod">피드백(Q6) → 학습향상으로 수정</li>
+      <li class="mod">학습성과(Q9) → 역량향상으로 수정</li>
+      <li>능동학습 참여 유도 문항 없음 → 추가 검토</li>
+      <li class="add">N1 CA·N2 검증·N3 연구 연계 신규</li>
+      <li class="add">D7 학습 주체성 4문항 도입</li>
+      <li>실험 난이도·원리이해 문항 유형 특화 유지</li>
+      <li style="color:#d97706;">→ 공통 기반 + 실험 특화 이중 구조로</li>
+    </ul>
+  </div>
+
+  <!-- 이론실습 -->
+  <div class="gap-card" style="border-color:#99f6e4;">
+    <div class="gc-title">
+      <span class="gc-badge" style="background:#0f766e;">이론실습</span>
+      대학 이론실습
+    </div>
+    <ul>
+      <li class="del">수업계획서 등록 Q1 → 삭제 필요</li>
+      <li class="mod">교수자 열정(Q9) → 학습지원으로 수정</li>
+      <li class="mod">피드백(Q12) → 학습향상으로 수정</li>
+      <li class="mod">학습성과(Q13) → 역량향상으로 수정</li>
+      <li class="add">N1 CA·N2 검증·N3 연구 연계 신규</li>
+      <li class="add">D7 학습 주체성 4문항 도입</li>
+      <li>실험 난이도·원리이해 문항 유형 특화 유지</li>
+      <li style="color:#d97706;">→ 공통 기반 + 이론실습 특화 이중 구조로</li>
+    </ul>
+  </div>
+
+  <!-- 대학원 -->
+  <div class="gap-card" style="border-color:#fde68a;">
+    <div class="gc-title">
+      <span class="gc-badge" style="background:#b45309;">대학원</span>
+      대학원
+    </div>
+    <ul>
+      <li class="del">수업계획서 등록 Q1 → 삭제 필요</li>
+      <li class="mod">교수자 열정(Q5) → 연구 지도 지원으로 수정</li>
+      <li class="mod">피드백(Q8) → 연구 피드백 질 중심으로 수정</li>
+      <li class="mod">학습성과(Q9) → 연구 역량·독립적 사고로 수정</li>
+      <li>학습자 자기보고·시간 투자 문항 없음</li>
+      <li class="add">N1 CA·N2 검증·N3 연구 연계 신규 추가</li>
+      <li class="add">D7 학습 주체성 4문항 도입 (대학원 자율 연구에 적합)</li>
+      <li class="add">대학원 고유: 지도 관계, 연구 윤리 추가 검토</li>
+      <li style="color:#dc2626;">→ 대학원 전용 프레임 별도 개발 필요</li>
+    </ul>
+  </div>
+
+  <!-- 전문대학원 -->
+  <div class="gap-card" style="border-color:#fca5a5;">
+    <div class="gc-title">
+      <span class="gc-badge" style="background:#b91c1c;">전문대학원</span>
+      전문대학원
+    </div>
+    <ul>
+      <li class="warn">대학원과 완전 동일 — 즉각 분리 필요</li>
+      <li class="del">수업계획서 등록 Q1 → 삭제 필요</li>
+      <li>전문성 개발(실무 역량) 측정 문항 없음</li>
+      <li>산업·현장 연계 관점 문항 없음</li>
+      <li class="add">전문직 역량 개발 문항 신규 추가</li>
+      <li class="add">실무 연계·프로젝트 기반 학습 문항 추가</li>
+      <li class="add">D7 N7(수업 외 학습 연결) 특히 적합</li>
+      <li style="color:#dc2626;">→ 전문대학원 전용 프레임 개발 가장 시급</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="sec-h">우선순위별 개선 권고</div>
+<table class="rec-table">
+  <thead>
+    <tr>
+      <th style="width:9%;">우선순위</th>
+      <th style="width:14%;">대상 유형</th>
+      <th>핵심 과제</th>
+      <th style="width:20%;">조치 방향</th>
+      <th style="width:9%;">시급성</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="pri-h high">P1 즉시</span></td>
+      <td class="type-cell">전문대학원</td>
+      <td>대학원과 동일 설문 분리. 전문직 역량·실무연계 차원 신설</td>
+      <td>전문대학원 전용 설문 신규 설계</td>
+      <td style="text-align:center; color:#dc2626; font-weight:700;">2026-2학기</td>
+    </tr>
+    <tr>
+      <td><span class="pri-h high">P1 즉시</span></td>
+      <td class="type-cell">전체 6종 공통</td>
+      <td>수업계획서 등록 Q1 삭제. 행정 시스템 직접 모니터링으로 대체</td>
+      <td>Q1 삭제 후 번호 재정렬</td>
+      <td style="text-align:center; color:#dc2626; font-weight:700;">2026-2학기</td>
+    </tr>
+    <tr>
+      <td><span class="pri-h high">P1 즉시</span></td>
+      <td class="type-cell">이론·실험·이론실습·대학원·전문대학원</td>
+      <td>교수자 열정→학습지원, 피드백→학습향상, 성과→역량향상 표현 수정</td>
+      <td>3개 문항 표현 일제 수정 (5개 유형)</td>
+      <td style="text-align:center; color:#dc2626; font-weight:700;">2026-2학기</td>
+    </tr>
+    <tr>
+      <td><span class="pri-h mid">P2 단기</span></td>
+      <td class="type-cell">이론·대학원·전문대학원</td>
+      <td>N1 CA 정렬·N2 정보 검증·N3 연구 연계 3개 신규 문항 추가 (이론은 전면, 대학원은 연구 맞춤 변형)</td>
+      <td>유형별 변형 문항 개발 후 파일럿</td>
+      <td style="text-align:center; color:#d97706; font-weight:700;">2027-1학기</td>
+    </tr>
+    <tr>
+      <td><span class="pri-h mid">P2 단기</span></td>
+      <td class="type-cell">전체 6종 공통</td>
+      <td>D7 학습 주체성 차원 4문항(N4·N5·N6·N7) 신규 도입 — 외부 학습 자원 활용 시대 대비. N5·N6는 공통 핵심에 편입, N4·N7은 유형별 선택 배치</td>
+      <td>인지 인터뷰·소규모 파일럿 검증 후 전면 적용</td>
+      <td style="text-align:center; color:#d97706; font-weight:700;">2027-1학기</td>
+    </tr>
+    <tr>
+      <td><span class="pri-h mid">P2 단기</span></td>
+      <td class="type-cell">실험실습·이론실습</td>
+      <td>공통 핵심 문항(10개) + 실험 특화 문항(2개) 이중 구조 공식화. 현행 실험 특화 문항(난이도·원리이해) 유지하되 표현 정비</td>
+      <td>공통+특화 이중 구조 설계</td>
+      <td style="text-align:center; color:#d97706; font-weight:700;">2027-1학기</td>
+    </tr>
+    <tr>
+      <td><span class="pri-h low">P3 중기</span></td>
+      <td class="type-cell">UGRP</td>
+      <td>나머지 유형과 비교 가능한 공통 기반 문항(5개) 편입. UGRP 특화 문항(동기·진로·안전) 유지. DGIST 특화 3문항 추가</td>
+      <td>공통 기반 + UGRP 특화 하이브리드 구조</td>
+      <td style="text-align:center; color:#15803d; font-weight:700;">2027-2학기</td>
+    </tr>
+    <tr>
+      <td><span class="pri-h low">P3 중기</span></td>
+      <td class="type-cell">대학원</td>
+      <td>학습자 자기보고·시간투자 문항 부재 재검토. 대학원 고유 차원(연구 자율성, 지도 관계 질, 학문 공동체 경험) 추가</td>
+      <td>대학원 전용 프레임 개발</td>
+      <td style="text-align:center; color:#15803d; font-weight:700;">2027-2학기</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="insight-action">
+  <strong>결론 :</strong>
+  현행 6개 유형 설문의 공통 문제는 네 가지다 — ① <strong>수업계획서 등록 문항(Q1) 전면 제거</strong>, ② <strong>교수자 열정·피드백·성과 3문항 표현 개선</strong>, ③ <strong>DGIST 정체성 반영 신규 3문항(N1·N2·N3) 추가</strong>, ④ <strong>D7 학습 주체성 4문항(N4·N5·N6·N7) 신설 도입</strong>.
+  ①·②·③은 즉시·단기 적용 대상이며, ④는 외부 학습 자원 활용이 보편화되는 학습 환경 변화에 대비한 신설 차원으로 인지 인터뷰·파일럿 검증 후 단계 도입을 권고한다.
+  그 위에 유형별 특화 차원(UGRP 연구·실험 난이도·대학원 지도 관계)을 얹는 것이 단계적 개선의 올바른 순서다.
+</div>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 2026년 5월 8일</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     별첨 페이지 공통 스타일 (인라인) — 좌우 대조 설문지
+═════════════════════════════════════════════════════════════ -->
+<style>
+/* 좌우 대조 컨테이너 */
+.cmp-wrap { width:100%; border-collapse:separate; border-spacing:7px 0; table-layout:fixed; }
+.cmp-wrap > tbody > tr > td { vertical-align:top; padding:0; }
+.cmp-col { width:50%; }
+.cmp-head {
+  font-size:9pt; font-weight:800; letter-spacing:0.5px;
+  padding:6px 10px; color:#fff; border-radius:2px 2px 0 0;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.cmp-head.cur { background:#475569; }
+.cmp-head.imp { background:#15803d; }
+.cmp-head .cnt { font-size:8pt; font-weight:700; background:rgba(255,255,255,0.18); padding:1px 8px; border-radius:10px; }
+.cmp-body { border:1px solid #e5e7eb; border-top:none; padding:7px 8px 8px; min-height:152mm; }
+
+/* 좌우 대조 내부 문항 표 */
+.qa-tbl { width:100%; border-collapse:collapse; font-size:7.4pt; table-layout:fixed; }
+.qa-tbl col.qn-c   { width:9%; }
+.qa-tbl col.dn-c   { width:14%; }
+.qa-tbl col.qt-c   { width:77%; }
+.qa-tbl th {
+  background:#1a3a6b; color:#fff; padding:3px 4px;
+  font-size:6.8pt; font-weight:700; text-align:center; line-height:1.2;
+}
+.qa-tbl th.imp-th { background:#15803d; }
+.qa-tbl td {
+  padding:2.5px 5px; border-bottom:1px solid #eef0f3;
+  font-size:7.3pt; line-height:1.35; vertical-align:top;
+}
+.qa-tbl tr:nth-child(even) td { background:#fafbfc; }
+.qa-tbl .qn-cell { text-align:center; font-weight:800; color:#1a3a6b; font-size:7.3pt; }
+.qa-tbl .qn-cell.new { color:#15803d; }
+.qa-tbl .dn-cell { text-align:center; font-size:6.4pt; line-height:1.25; }
+.qa-tbl .qt-cell { color:#374151; word-break:keep-all; }
+.qa-tbl .qt-cell .scale { font-size:6.3pt; color:#9ca3af; display:block; margin-top:1px; }
+.qa-tbl tr.row-new td { background:#f0fdf4 !important; }
+.qa-tbl tr.row-new td.qt-cell { color:#166534; font-weight:600; }
+.qa-tbl tr.row-mod td.qt-cell { color:#92400e; }
+.qa-tbl tr.row-del td.qt-cell { color:#b91c1c; text-decoration:line-through; opacity:0.75; }
+.qa-tbl tr.row-subj td { background:#fefce8; }
+.qa-tbl tr.row-subj td.qt-cell { color:#713f12; font-style:italic; }
+
+/* 차원 배지(공통) */
+.dim {
+  display:inline-block; font-size:6pt; font-weight:700;
+  padding:0 4px; border-radius:2px; line-height:1.5;
+}
+.dim-d1  { background:#fef3c7; color:#92400e; }
+.dim-d2  { background:#dbeafe; color:#1e40af; }
+.dim-d3  { background:#ccfbf1; color:#0f766e; }
+.dim-d4  { background:#f1f5f9; color:#475569; }
+.dim-d5  { background:#ede9fe; color:#5b21b6; }
+.dim-d6  { background:#dcfce7; color:#15803d; }
+.dim-d7  { background:#dcfce7; color:#15803d; }
+.dim-adm { background:#f3f4f6; color:#6b7280; border:1px solid #e2e8f0; }
+.dim-ug  { background:#f5f3ff; color:#5b21b6; }
+.dim-lab { background:#ecfeff; color:#0e7490; }
+.dim-grad{ background:#fef3c7; color:#b45309; }
+.dim-pgr { background:#fee2e2; color:#b91c1c; }
+.dim-new { background:#dcfce7; color:#15803d; font-size:5.6pt; }
+
+/* 변화 요약 박스 */
+.chg-summary {
+  margin-top:9px; padding:8px 12px;
+  background:#f0f5fb; border-left:4px solid #1a3a6b;
+  font-size:8pt; line-height:1.6; color:#1f2937;
+}
+.chg-summary strong { color:#1a3a6b; }
+.chg-summary .chg-row { display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:3px; }
+.chg-summary .chg-tag {
+  display:inline-block; font-size:7.3pt; font-weight:700;
+  padding:1px 7px; border-radius:10px;
+}
+.chg-tag.del { background:#fee2e2; color:#b91c1c; }
+.chg-tag.new { background:#dcfce7; color:#15803d; }
+.chg-tag.mod { background:#fef3c7; color:#92400e; }
+.chg-tag.uniq{ background:#f5f3ff; color:#5b21b6; }
+.chg-tag.same{ background:#e5e7eb; color:#475569; }
+
+/* 페이지 제목 라벨 */
+.app-title {
+  font-size:13pt; font-weight:900; color:#1a3a6b;
+  border-bottom:2pt solid #1a3a6b; padding-bottom:6px; margin-bottom:10px;
+  display:flex; justify-content:space-between; align-items:flex-end;
+}
+.app-title small { font-size:8pt; font-weight:400; color:#9ca3af; letter-spacing:1px; }
+.app-title .typ-tag { font-size:8.5pt; font-weight:800; padding:3px 12px; border-radius:14px; color:#fff; letter-spacing:0; }
+.app-title .typ-tag.t-th  { background:#1a3a6b; }
+.app-title .typ-tag.t-ug  { background:#5b21b6; }
+.app-title .typ-tag.t-lab { background:#0e7490; }
+.app-title .typ-tag.t-tl  { background:#0f766e; }
+.app-title .typ-tag.t-gr  { background:#b45309; }
+.app-title .typ-tag.t-pg  { background:#b91c1c; }
+</style>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     별첨 1 — 대학 교과이론 (Q1~Q14 → 개선 18+3주관식)
+═════════════════════════════════════════════════════════════ -->
+<section class="page">
+
+<div class="app-title">
+  <span>【별첨 1】 대학 교과이론 — 현행 vs 개선안 <span class="typ-tag t-th">교과이론</span></span>
+  <small>APPENDIX 1 — Current vs Proposed Survey · College Theory Course Type</small>
+</div>
+
+<table class="cmp-wrap"><tbody><tr>
+
+<!-- ─── 좌측: 현행 (PDF 원문) ─── -->
+<td class="cmp-col">
+  <div class="cmp-head cur"><span>현행 설문 (PDF 원문)</span><span class="cnt">정량 12 + 주관식 2 = 14문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th>번호</th><th>척도</th><th style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-adm">행정</span></td><td class="qt-cell">수업계획서가 정해진 기간 내에 등록되어 있다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표 및 계획에 부합하여 체계적으로 진행되었다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 다양한 방법으로 학생들의 적극적인 수업 참여를 유도하였다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 이 수업에 성실하게 참여하였다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">나는 이 수업을 위해 주당 수업 외 평균 얼마나 학습하였습니까? <span class="scale">선택형 (1시간 미만~7시간 이상)</span></td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 성실하고 열정적으로 수업에 임하였다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료 및 교재는 내용 이해에 도움이 되었다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">시험 및 과제에 대해 적절한 피드백이 제공되었다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 이 분야에서 많은 것을 배웠다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q12</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다. <span class="scale">5점 척도</span></td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q13</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q14</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+<!-- ─── 우측: 개선안 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head imp"><span>개선안 (이론 기준)</span><span class="cnt">정량 18 + 주관식 3 = 21문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th class="imp-th">번호</th><th class="imp-th">차원</th><th class="imp-th" style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표 및 계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 다양한 방법으로 학생들의 적극적인 수업 참여를 유도하였다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 이 수업에 성실하게 참여하였다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">주당 수업 외 평균 학습 시간 <span class="scale">선택형</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 학생들의 학습을 적극적으로 지원하였다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료와 교재는 내용 이해에 도움이 되었다. <span class="scale">≈ 표현 정리</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">받은 피드백이 내 학습 향상에 실질적으로 도움이 되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 해당 분야의 역량이 실질적으로 향상되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q12</td><td class="dn-cell"><span class="dim dim-d2">D2</span> <span class="dim dim-new">★N1</span></td><td class="qt-cell">수업 목표·내용·평가 방식이 일관성 있게 연계되어 있었다. (CA 정렬)</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q13</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N2</span></td><td class="qt-cell">정보·답변의 신뢰성·한계를 스스로 검증하는 능력을 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q14</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N3</span></td><td class="qt-cell">수업 내용이 연구·실제 문제와 어떻게 연결되는지 이해할 수 있었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q15</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N4</span></td><td class="qt-cell">다양한 학습 자원·도구를 스스로 선택·활용하는 안목을 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q16</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N5</span></td><td class="qt-cell">평가가 결과물보다 사고 과정·이해의 깊이를 확인하는 방향으로 이루어졌다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q17</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N6</span></td><td class="qt-cell">기계적·표준적 답을 넘어, 판단·해석·창의가 필요한 사고를 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q18</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N7</span></td><td class="qt-cell">수업 외 자기주도 학습이 강의 내용과 유기적으로 연결되었다.</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주1</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주2</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell new">주3</td><td class="dn-cell"><span class="dim dim-adm">주관식</span> <span class="dim dim-new">★신규</span></td><td class="qt-cell">강의실 밖 학습 자원이 학습에 어떤 영향을 주었습니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+</tr></tbody></table>
+
+<div class="chg-summary">
+  <strong>변화 요약 :</strong>
+  현행 14문항 (정량 12 + 주관식 2) → 개선 21문항 (정량 18 + 주관식 3) · 정량 <strong>+6</strong> / 주관식 <strong>+1</strong>
+  <div class="chg-row">
+    <span class="chg-tag del">✕ Q1 삭제</span> <span style="font-size:7.3pt; color:#6b7280;">수업계획서 등록 — 행정 항목 (교수법 무관)</span>
+    <span class="chg-tag mod">≈ Q7·Q9·Q10·Q11 표현 개선</span> <span style="font-size:7.3pt; color:#6b7280;">학습 지원·실질 도움·역량 향상으로 정련</span>
+  </div>
+  <div class="chg-row">
+    <span class="chg-tag new">＋ N1 (D2)</span><span class="chg-tag new">＋ N2 (D6)</span><span class="chg-tag new">＋ N3 (D6)</span><span class="chg-tag new">＋ N4·N5·N6·N7 (D7)</span>
+    <span style="font-size:7.3pt; color:#6b7280;">DGIST 정체성·학습 주체성 7문항 신설</span>
+  </div>
+</div>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 별첨 1 / 6 · 2026년 5월 8일</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     별첨 2 — 대학 교과UGRP (Q1~Q11 → 개선 14문항 하이브리드)
+═════════════════════════════════════════════════════════════ -->
+<section class="page">
+
+<div class="app-title">
+  <span>【별첨 2】 대학 교과UGRP — 현행 vs 개선안 <span class="typ-tag t-ug">교과UGRP</span></span>
+  <small>APPENDIX 2 — Current vs Proposed Survey · Undergraduate Group Research Program (UGRP)</small>
+</div>
+
+<table class="cmp-wrap"><tbody><tr>
+
+<!-- ─── 좌측: 현행 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head cur"><span>현행 설문 (PDF 원문)</span><span class="cnt">정량 9 + 주관식 2 = 11문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th>번호</th><th>척도</th><th style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 연구 사전준비를 철저히 하여 참여하였다. <span class="scale">5점 척도 (자기보고)</span></td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 이 수업에 성실히 참여하였다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">주당 수업 외 평균 학습 시간 <span class="scale">선택형</span></td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-ug">UG</span></td><td class="qt-cell">이 수업을 통해 연구 분야 학습에 대한 동기·관심도가 향상되었다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-ug">UG</span></td><td class="qt-cell">이 수업이 연구 방향·진로 결정에 도움이 되었다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-ug">UG</span></td><td class="qt-cell">연구의 원리를 이해하는 데 도움이 되었다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">연구 진행과정 및 결과에 대한 적절한 피드백이 제공되었다. <span class="scale">5점 척도</span></td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-ug">UG</span></td><td class="qt-cell">실험실 안전·보안 교육 및 기자재 관리가 적절히 이루어졌다. <span class="scale">5점 척도</span></td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+<!-- ─── 우측: 개선안 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head imp"><span>개선안 (UGRP 하이브리드)</span><span class="cnt">정량 14 + 주관식 3 = 17문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th class="imp-th">번호</th><th class="imp-th">차원</th><th class="imp-th" style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 연구 사전준비를 철저히 하여 참여하였다. <span class="scale">자기보고</span></td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 이 수업에 성실히 참여하였다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">주당 수업 외 평균 학습 시간 <span class="scale">선택형</span></td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">연구 진행과정·결과에 대한 피드백이 학습·연구 향상에 실질적으로 도움이 되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-ug">UG</span></td><td class="qt-cell">연구 분야 학습에 대한 동기·관심도가 향상되었다.</td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-ug">UG</span></td><td class="qt-cell">연구 방향·진로 결정에 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-ug">UG</span></td><td class="qt-cell">연구의 원리를 이해하는 데 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-ug">UG</span></td><td class="qt-cell">실험실 안전·보안 교육 및 기자재 관리가 적절히 이루어졌다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q10</td><td class="dn-cell"><span class="dim dim-d2">D2</span> <span class="dim dim-new">★N1</span></td><td class="qt-cell">연구 주제·과정·평가가 일관성 있게 연계되어 있었다. (CA 정렬)</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q11</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N2</span></td><td class="qt-cell">연구 자료·결과의 신뢰성·한계를 스스로 검증하는 능력을 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q12</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N3</span></td><td class="qt-cell">연구 내용이 실제 문제·후속 연구와 어떻게 연결되는지 이해할 수 있었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q13</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N4</span></td><td class="qt-cell">다양한 학습·연구 자원·도구를 스스로 선택·활용하는 안목을 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q14</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N6</span></td><td class="qt-cell">기계적·표준적 답을 넘어, 판단·해석·창의가 필요한 연구 사고를 길러 주었다.</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주1</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주2</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell new">주3</td><td class="dn-cell"><span class="dim dim-adm">주관식</span> <span class="dim dim-new">★신규</span></td><td class="qt-cell">팀 협업·외부 자원이 연구 학습에 어떤 영향을 주었습니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+</tr></tbody></table>
+
+<div class="chg-summary">
+  <strong>변화 요약 :</strong>
+  현행 11문항 (정량 9 + 주관식 2) → 개선 17문항 (정량 14 + 주관식 3) · 정량 <strong>+5</strong> / 주관식 <strong>+1</strong>
+  <div class="chg-row">
+    <span class="chg-tag uniq">UGRP 특화 4문항 유지</span> <span style="font-size:7.3pt; color:#6b7280;">동기·진로·원리·안전 (UG)</span>
+    <span class="chg-tag mod">≈ Q5(피드백 실질도움) 표현 개선</span>
+  </div>
+  <div class="chg-row">
+    <span class="chg-tag new">＋ N1 (D2)</span><span class="chg-tag new">＋ N2·N3 (D6)</span><span class="chg-tag new">＋ N4·N6 (D7)</span>
+    <span style="font-size:7.3pt; color:#6b7280;">DGIST 정체성·연구 주체성 5문항 신설 (UGRP는 자기주도 시간·평가 진정성 문항이 연구 활동에 자연 내재되어 N5·N7 제외)</span>
+  </div>
+</div>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 별첨 2 / 6 · 2026년 5월 8일</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     별첨 3 — 대학 실험실습분야 (Q1~Q15 → 개선 17문항)
+═════════════════════════════════════════════════════════════ -->
+<section class="page">
+
+<div class="app-title">
+  <span>【별첨 3】 대학 실험실습분야 — 현행 vs 개선안 <span class="typ-tag t-lab">실험실습</span></span>
+  <small>APPENDIX 3 — Current vs Proposed Survey · College Experiment &amp; Lab Course Type</small>
+</div>
+
+<table class="cmp-wrap"><tbody><tr>
+
+<!-- ─── 좌측: 현행 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head cur"><span>현행 설문 (PDF 원문)</span><span class="cnt">정량 13 + 주관식 2 = 15문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th>번호</th><th>척도</th><th style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-adm">행정</span></td><td class="qt-cell">수업계획서가 정해진 기간 내에 등록되어 있다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표·계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-lab">LAB</span></td><td class="qt-cell">실험/실습의 난이도·시간이 적절하였다.</td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 이 수업에 성실하게 참여하였다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-lab">LAB</span></td><td class="qt-cell">실험/실습의 원리를 이해하는 데 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">시험 및 과제에 대해 적절한 피드백이 제공되었다.</td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">주당 수업 외 평균 학습 시간 <span class="scale">선택형</span></td></tr>
+        <tr><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 이 분야에서 많은 것을 배웠다.</td></tr>
+        <tr><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 성실하고 열정적으로 수업에 임하였다.</td></tr>
+        <tr><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr><td class="qn-cell">Q12</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr><td class="qn-cell">Q13</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료 및 교재는 내용 이해에 도움이 되었다.</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q14</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q15</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+<!-- ─── 우측: 개선안 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head imp"><span>개선안 (실험실습 특화)</span><span class="cnt">정량 17 + 주관식 3 = 20문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th class="imp-th">번호</th><th class="imp-th">차원</th><th class="imp-th" style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표·계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-lab">LAB</span></td><td class="qt-cell">실험/실습의 난이도·시간이 적절하였다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 이 수업에 성실하게 참여하였다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-lab">LAB</span></td><td class="qt-cell">실험/실습의 원리를 이해하는 데 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">주당 수업 외 평균 학습 시간 <span class="scale">선택형</span></td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 학생들의 학습을 적극적으로 지원하였다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료와 교재는 내용 이해에 도움이 되었다. <span class="scale">≈ 표현 정리</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">받은 피드백이 내 학습 향상에 실질적으로 도움이 되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 해당 분야의 역량이 실질적으로 향상되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q12</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q13</td><td class="dn-cell"><span class="dim dim-d2">D2</span> <span class="dim dim-new">★N1</span></td><td class="qt-cell">수업 목표·내용·평가 방식이 일관성 있게 연계되어 있었다. (CA 정렬)</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q14</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N2</span></td><td class="qt-cell">실험 데이터·답변의 신뢰성·한계를 스스로 검증하는 능력을 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q15</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N3</span></td><td class="qt-cell">실험/실습 내용이 연구·실제 문제와 어떻게 연결되는지 이해할 수 있었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q16</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N5</span></td><td class="qt-cell">평가가 결과물보다 사고 과정·이해의 깊이를 확인하는 방향으로 이루어졌다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q17</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N6</span></td><td class="qt-cell">기계적·표준적 답을 넘어, 판단·해석·창의가 필요한 사고를 길러 주었다. <span class="scale">실험 설계·해석</span></td></tr>
+        <tr class="row-subj"><td class="qn-cell">주1</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주2</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell new">주3</td><td class="dn-cell"><span class="dim dim-adm">주관식</span> <span class="dim dim-new">★신규</span></td><td class="qt-cell">실험실 밖 자료·도구 활용이 학습에 어떤 영향을 주었습니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+</tr></tbody></table>
+
+<div class="chg-summary">
+  <strong>변화 요약 :</strong>
+  현행 15문항 (정량 13 + 주관식 2) → 개선 20문항 (정량 17 + 주관식 3) · 정량 <strong>+4</strong> / 주관식 <strong>+1</strong>
+  <div class="chg-row">
+    <span class="chg-tag del">✕ Q1 삭제</span> <span style="font-size:7.3pt; color:#6b7280;">수업계획서 등록 — 행정 항목 (교수법 무관)</span>
+    <span class="chg-tag uniq">실험실습 특화 2문항 유지</span> <span style="font-size:7.3pt; color:#6b7280;">난이도·시간 / 원리 이해 (LAB)</span>
+  </div>
+  <div class="chg-row">
+    <span class="chg-tag mod">≈ Q7·Q9·Q10·Q11 표현 개선</span>
+    <span class="chg-tag new">＋ N1 (D2)</span><span class="chg-tag new">＋ N2·N3 (D6)</span><span class="chg-tag new">＋ N5·N6 (D7)</span>
+    <span style="font-size:7.3pt; color:#6b7280;">실험 사고·평가 진정성 5문항 신설 (N4·N7은 실험 활동에 자연 내재되어 제외)</span>
+  </div>
+</div>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 별첨 3 / 6 · 2026년 5월 8일</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     별첨 4 — 대학 이론실습 (Q1~Q16 → 개선 18문항)
+═════════════════════════════════════════════════════════════ -->
+<section class="page">
+
+<div class="app-title">
+  <span>【별첨 4】 대학 이론실습 — 현행 vs 개선안 <span class="typ-tag t-tl">이론실습</span></span>
+  <small>APPENDIX 4 — Current vs Proposed Survey · College Theory + Practice (Hybrid) Type</small>
+</div>
+
+<table class="cmp-wrap"><tbody><tr>
+
+<!-- ─── 좌측: 현행 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head cur"><span>현행 설문 (PDF 원문)</span><span class="cnt">정량 14 + 주관식 2 = 16문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th>번호</th><th>척도</th><th style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-adm">행정</span></td><td class="qt-cell">수업계획서가 정해진 기간 내에 등록되어 있다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표·계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 다양한 방법으로 학생들의 적극적 참여를 유도하였다.</td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 이 수업에 성실히 참여하였다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">주당 수업 외 평균 학습 시간 <span class="scale">선택형</span></td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-lab">LAB</span></td><td class="qt-cell">실험/실습의 난이도·시간이 적절하였다.</td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-lab">LAB</span></td><td class="qt-cell">실험/실습의 원리를 이해하는 데 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 성실하고 열정적으로 수업에 임하였다.</td></tr>
+        <tr><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료 및 교재는 내용 이해에 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q12</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">시험 및 과제에 대해 적절한 피드백이 제공되었다.</td></tr>
+        <tr><td class="qn-cell">Q13</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 이 분야에서 많은 것을 배웠다.</td></tr>
+        <tr><td class="qn-cell">Q14</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q15</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q16</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+<!-- ─── 우측: 개선안 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head imp"><span>개선안 (이론+실습 이중구조)</span><span class="cnt">정량 18 + 주관식 3 = 21문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th class="imp-th">번호</th><th class="imp-th">차원</th><th class="imp-th" style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표·계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 다양한 방법으로 학생들의 적극적 참여를 유도하였다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">나는 이 수업에 성실히 참여하였다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">주당 수업 외 평균 학습 시간 <span class="scale">선택형</span></td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-lab">LAB</span></td><td class="qt-cell">실험/실습의 난이도·시간이 적절하였다.</td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-lab">LAB</span></td><td class="qt-cell">실험/실습의 원리를 이해하는 데 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 학생들의 학습을 적극적으로 지원하였다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료와 교재는 내용 이해에 도움이 되었다. <span class="scale">≈ 표현 정리</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">받은 피드백이 내 학습 향상에 실질적으로 도움이 되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q12</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 해당 분야의 역량이 실질적으로 향상되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q13</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q14</td><td class="dn-cell"><span class="dim dim-d2">D2</span> <span class="dim dim-new">★N1</span></td><td class="qt-cell">수업 목표·내용·평가 방식이 일관성 있게 연계되어 있었다. (CA 정렬)</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q15</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N2</span></td><td class="qt-cell">정보·실험 결과의 신뢰성·한계를 스스로 검증하는 능력을 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q16</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N3</span></td><td class="qt-cell">이론·실습 내용이 연구·실제 문제와 어떻게 연결되는지 이해할 수 있었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q17</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N5</span></td><td class="qt-cell">평가가 결과물보다 사고 과정·이해의 깊이를 확인하는 방향으로 이루어졌다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q18</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N6·N7</span></td><td class="qt-cell">기계적·표준적 답을 넘어 판단·해석·창의가 필요한 사고를 길러 주었고, 수업 외 자기주도 학습이 강의 내용과 유기적으로 연결되었다.</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주1</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주2</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell new">주3</td><td class="dn-cell"><span class="dim dim-adm">주관식</span> <span class="dim dim-new">★신규</span></td><td class="qt-cell">강의실·실험실 밖 학습 자원이 학습에 어떤 영향을 주었습니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+</tr></tbody></table>
+
+<div class="chg-summary">
+  <strong>변화 요약 :</strong>
+  현행 16문항 (정량 14 + 주관식 2) → 개선 21문항 (정량 18 + 주관식 3) · 정량 <strong>+4</strong> / 주관식 <strong>+1</strong>
+  <div class="chg-row">
+    <span class="chg-tag del">✕ Q1 삭제</span> <span style="font-size:7.3pt; color:#6b7280;">수업계획서 등록 — 행정 항목</span>
+    <span class="chg-tag uniq">실습 특화 2문항 유지</span> <span style="font-size:7.3pt; color:#6b7280;">난이도·시간 / 원리 이해 (LAB)</span>
+  </div>
+  <div class="chg-row">
+    <span class="chg-tag mod">≈ Q8·Q10·Q11·Q12 표현 개선</span>
+    <span class="chg-tag new">＋ N1 (D2)</span><span class="chg-tag new">＋ N2·N3 (D6)</span><span class="chg-tag new">＋ N5·N6·N7 (D7)</span>
+    <span style="font-size:7.3pt; color:#6b7280;">이론+실습 이중구조에 정체성·주체성 6문항 신설 (Q18은 N6·N7 통합 표현)</span>
+  </div>
+</div>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 별첨 4 / 6 · 2026년 5월 8일</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     별첨 5 — 대학원 (Q1~Q12 → 개선 15문항)
+═════════════════════════════════════════════════════════════ -->
+<section class="page">
+
+<div class="app-title">
+  <span>【별첨 5】 대학원 — 현행 vs 개선안 <span class="typ-tag t-gr">대학원</span></span>
+  <small>APPENDIX 5 — Current vs Proposed Survey · Graduate School Type</small>
+</div>
+
+<table class="cmp-wrap"><tbody><tr>
+
+<!-- ─── 좌측: 현행 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head cur"><span>현행 설문 (PDF 원문)</span><span class="cnt">정량 10 + 주관식 2 = 12문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th>번호</th><th>척도</th><th style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-adm">행정</span></td><td class="qt-cell">수업계획서가 정해진 기간 내에 등록되어 있다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표·계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 다양한 방법으로 학생들의 적극적 참여를 유도하였다.</td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 성실하고 열정적으로 수업에 임하였다.</td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료 및 교재는 내용 이해에 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">시험 및 과제에 대해 적절한 피드백이 제공되었다.</td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 이 분야에서 많은 것을 배웠다.</td></tr>
+        <tr><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q12</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:9px; padding:6px 9px; background:#fef2f2; border-left:3px solid #dc2626; font-size:7.3pt; line-height:1.5; color:#991b1b;">
+      <strong>※ 주의 :</strong> 현행 대학원 설문은 전문대학원 설문과 <strong>완전 동일 (12문항 모두 일치)</strong> · 학습자 자기보고·시간투자 문항(D1·D4) 부재
+    </div>
+  </div>
+</td>
+
+<!-- ─── 우측: 개선안 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head imp"><span>개선안 (대학원 전용 프레임)</span><span class="cnt">정량 15 + 주관식 3 = 18문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th class="imp-th">번호</th><th class="imp-th">차원</th><th class="imp-th" style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표·계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 다양한 방법으로 학생들의 적극적 참여를 유도하였다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 학생들의 학습을 적극적으로 지원하였다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료와 교재는 내용 이해에 도움이 되었다. <span class="scale">≈ 표현 정리</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">받은 피드백이 내 학습·연구 향상에 실질적으로 도움이 되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 해당 분야의 역량이 실질적으로 향상되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q10</td><td class="dn-cell"><span class="dim dim-d2">D2</span> <span class="dim dim-new">★N1</span></td><td class="qt-cell">수업 목표·내용·평가 방식이 일관성 있게 연계되어 있었다. (CA 정렬)</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q11</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N2</span></td><td class="qt-cell">정보·답변·문헌의 신뢰성·한계를 스스로 검증하는 능력을 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q12</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N3</span></td><td class="qt-cell">수업 내용이 연구 또는 실제 문제와 어떻게 연결되는지 이해할 수 있었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q13</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N4</span></td><td class="qt-cell">다양한 학습·연구 자원·도구를 스스로 선택·활용하는 안목을 길러 주었다. <span class="scale">대학원 특화</span></td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q14</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N5</span></td><td class="qt-cell">평가가 결과물보다 사고 과정·이해의 깊이를 확인하는 방향으로 이루어졌다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q15</td><td class="dn-cell"><span class="dim dim-grad">대학원</span> <span class="dim dim-new">★특화</span></td><td class="qt-cell">이 수업은 나의 연구 자율성·학문적 사고 형성에 기여하였다. <span class="scale">대학원 고유 차원</span></td></tr>
+        <tr class="row-subj"><td class="qn-cell">주1</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주2</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell new">주3</td><td class="dn-cell"><span class="dim dim-adm">주관식</span> <span class="dim dim-new">★신규</span></td><td class="qt-cell">수업 외 학습·연구 활동이 강의 내용과 어떻게 연결되었습니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+</tr></tbody></table>
+
+<div class="chg-summary">
+  <strong>변화 요약 :</strong>
+  현행 12문항 (정량 10 + 주관식 2) → 개선 18문항 (정량 15 + 주관식 3) · 정량 <strong>+5</strong> / 주관식 <strong>+1</strong>
+  <div class="chg-row">
+    <span class="chg-tag del">✕ Q1 삭제</span> <span style="font-size:7.3pt; color:#6b7280;">수업계획서 등록 — 행정 항목</span>
+    <span class="chg-tag mod">≈ Q4·Q6·Q7·Q8 표현 개선</span>
+  </div>
+  <div class="chg-row">
+    <span class="chg-tag new">＋ N1 (D2)</span><span class="chg-tag new">＋ N2·N3 (D6)</span><span class="chg-tag new">＋ N4·N5 (D7)</span>
+    <span class="chg-tag new">＋ 대학원 특화 1문항</span>
+    <span style="font-size:7.3pt; color:#6b7280;">전문대학원과 분리 · 연구 자율성·학문적 사고 차원 도입</span>
+  </div>
+</div>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 별첨 5 / 6 · 2026년 5월 8일</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     별첨 6 — 전문대학원 (Q1~Q12 → 개선 15문항)
+═════════════════════════════════════════════════════════════ -->
+<section class="page">
+
+<div class="app-title">
+  <span>【별첨 6】 전문대학원 — 현행 vs 개선안 <span class="typ-tag t-pg">전문대학원</span></span>
+  <small>APPENDIX 6 — Current vs Proposed Survey · Professional Graduate School Type</small>
+</div>
+
+<table class="cmp-wrap"><tbody><tr>
+
+<!-- ─── 좌측: 현행 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head cur"><span>현행 설문 (PDF 원문)</span><span class="cnt">정량 10 + 주관식 2 = 12문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th>번호</th><th>척도</th><th style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-adm">행정</span></td><td class="qt-cell">수업계획서가 정해진 기간 내에 등록되어 있다. <span class="scale">예 / 아니오</span></td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표·계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 다양한 방법으로 학생들의 적극적 참여를 유도하였다.</td></tr>
+        <tr><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 성실하고 열정적으로 수업에 임하였다.</td></tr>
+        <tr><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료 및 교재는 내용 이해에 도움이 되었다.</td></tr>
+        <tr><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">시험 및 과제에 대해 적절한 피드백이 제공되었다.</td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 이 분야에서 많은 것을 배웠다.</td></tr>
+        <tr><td class="qn-cell">Q10</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q11</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">Q12</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:9px; padding:6px 9px; background:#fef2f2; border-left:3px solid #dc2626; font-size:7.3pt; line-height:1.5; color:#991b1b;">
+      <strong>※ 주의 :</strong> 현행 전문대학원 설문은 대학원 설문과 <strong>완전 동일 (12문항 모두 일치)</strong> · 전문 실무·현장 적용·산학 연계 문항 부재
+    </div>
+  </div>
+</td>
+
+<!-- ─── 우측: 개선안 ─── -->
+<td class="cmp-col">
+  <div class="cmp-head imp"><span>개선안 (전문대학원 전용 프레임)</span><span class="cnt">정량 15 + 주관식 3 = 18문항</span></div>
+  <div class="cmp-body">
+    <table class="qa-tbl">
+      <colgroup><col class="qn-c"><col class="dn-c"><col class="qt-c"></colgroup>
+      <thead><tr><th class="imp-th">번호</th><th class="imp-th">차원</th><th class="imp-th" style="text-align:left; padding-left:6px;">문항 내용</th></tr></thead>
+      <tbody>
+        <tr><td class="qn-cell">Q1</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">이 수업은 강의 목표·계획에 부합하여 체계적으로 진행되었다.</td></tr>
+        <tr><td class="qn-cell">Q2</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 다양한 방법으로 학생들의 적극적 참여를 유도하였다.</td></tr>
+        <tr><td class="qn-cell">Q3</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">교수자에게 질문하거나 도움을 요청하기가 수월하였다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q4</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">교수자는 학생들의 학습을 적극적으로 지원하였다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q5</td><td class="dn-cell"><span class="dim dim-d5">D5</span></td><td class="qt-cell">수업 내용은 이해하기 쉽고 명확하게 전달되었다.</td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q6</td><td class="dn-cell"><span class="dim dim-d2">D2</span></td><td class="qt-cell">수업 자료와 교재는 내용 이해에 도움이 되었다. <span class="scale">≈ 표현 정리</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q7</td><td class="dn-cell"><span class="dim dim-d3">D3</span></td><td class="qt-cell">받은 피드백이 내 학습·실무 향상에 실질적으로 도움이 되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr class="row-mod"><td class="qn-cell">Q8</td><td class="dn-cell"><span class="dim dim-d1">D1</span></td><td class="qt-cell">이 수업을 통해 해당 분야의 전문 역량이 실질적으로 향상되었다. <span class="scale">≈ 표현 개선</span></td></tr>
+        <tr><td class="qn-cell">Q9</td><td class="dn-cell"><span class="dim dim-d4">D4</span></td><td class="qt-cell">수업량 및 과제 분배가 적절하였다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q10</td><td class="dn-cell"><span class="dim dim-d2">D2</span> <span class="dim dim-new">★N1</span></td><td class="qt-cell">수업 목표·내용·평가 방식이 일관성 있게 연계되어 있었다. (CA 정렬)</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q11</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N2</span></td><td class="qt-cell">전문 정보·자료의 신뢰성·한계를 스스로 검증하는 능력을 길러 주었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q12</td><td class="dn-cell"><span class="dim dim-d6">D6</span> <span class="dim dim-new">★N3</span></td><td class="qt-cell">수업 내용이 실무·현장 문제와 어떻게 연결되는지 이해할 수 있었다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q13</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N5</span></td><td class="qt-cell">평가가 결과물보다 사고 과정·이해의 깊이를 확인하는 방향으로 이루어졌다.</td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q14</td><td class="dn-cell"><span class="dim dim-d7">D7</span> <span class="dim dim-new">★N7</span></td><td class="qt-cell">수업 외 자기주도 학습·실무 경험이 강의 내용과 유기적으로 연결되었다. <span class="scale">전문대학원 특화</span></td></tr>
+        <tr class="row-new"><td class="qn-cell new">Q15</td><td class="dn-cell"><span class="dim dim-pgr">전문대</span> <span class="dim dim-new">★특화</span></td><td class="qt-cell">이 수업은 나의 전문 실무 적용·현장 의사결정 역량 형성에 기여하였다. <span class="scale">전문대학원 고유 차원</span></td></tr>
+        <tr class="row-subj"><td class="qn-cell">주1</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 가장 좋았던 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell">주2</td><td class="dn-cell"><span class="dim dim-adm">주관식</span></td><td class="qt-cell">이 수업에서 개선되었으면 하는 점은 무엇입니까?</td></tr>
+        <tr class="row-subj"><td class="qn-cell new">주3</td><td class="dn-cell"><span class="dim dim-adm">주관식</span> <span class="dim dim-new">★신규</span></td><td class="qt-cell">실무·현장·외부 자료가 학습에 어떤 영향을 주었습니까?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</td>
+
+</tr></tbody></table>
+
+<div class="chg-summary">
+  <strong>변화 요약 :</strong>
+  현행 12문항 (정량 10 + 주관식 2) → 개선 18문항 (정량 15 + 주관식 3) · 정량 <strong>+5</strong> / 주관식 <strong>+1</strong>
+  <div class="chg-row">
+    <span class="chg-tag del">✕ Q1 삭제</span> <span style="font-size:7.3pt; color:#6b7280;">수업계획서 등록 — 행정 항목</span>
+    <span class="chg-tag mod">≈ Q4·Q6·Q7·Q8 표현 개선 (실무 맥락 반영)</span>
+  </div>
+  <div class="chg-row">
+    <span class="chg-tag new">＋ N1 (D2)</span><span class="chg-tag new">＋ N2·N3 (D6)</span><span class="chg-tag new">＋ N5·N7 (D7)</span>
+    <span class="chg-tag new">＋ 전문대학원 특화 1문항</span>
+    <span style="font-size:7.3pt; color:#6b7280;">대학원과 분리 · 실무 적용·현장 의사결정 차원 도입</span>
+  </div>
+</div>
+
+<p style="font-size:7.8pt; color:#9ca3af; margin-top:8px; text-align:right;">— 본 보고서 v1.0 본문 끝 —</p>
+
+<div class="doc-footer">DGIST 교수학습센터(CTL) · 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 · 별첨 6 / 6 · 2026년 5월 8일</div>
+</section>
+
+
+</body>
+</html>

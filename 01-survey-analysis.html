@@ -1,0 +1,1556 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>강의평가 지표 개선 설문조사 분석보고서 v1.0 (내부 보고용) — DGIST 교수학습센터(CTL)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── @page: A4 + 페이지 번호 + 러닝 헤더 ── */
+@page {
+  size: A4 portrait;
+  margin: 18mm 18mm 18mm 18mm;
+  @bottom-center {
+    content: "— " counter(page) " —";
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', Arial, sans-serif;
+    font-size: 8.5pt;
+    color: #888;
+  }
+  @top-right {
+    content: "DGIST 강의평가 지표 개선 설문조사 분석보고서 v1.0";
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', Arial, sans-serif;
+    font-size: 7.5pt;
+    color: #bbb;
+  }
+}
+@page :first {
+  @bottom-center { content: none; }
+  @top-right { content: none; }
+}
+
+/* ── 화면 ── */
+html { background: #c8c8c8; }
+body {
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', Arial, sans-serif;
+  font-size: 10.5pt;
+  color: #1c1c2e;
+  line-height: 1.75;
+  background: #fff;
+  width: 210mm;
+  margin: 24px auto;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.22);
+  /* 한국어 가독성: 어절 단위 줄바꿈 + 장단어 안전망 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-spacing: ideograph-alpha ideograph-numeric;
+}
+/* 제목은 귀점 방지용 balance */
+h1, h2, h3, h4 { text-wrap: balance; word-break: keep-all; }
+p, li, td, th { word-break: keep-all; overflow-wrap: break-word; }
+
+/* 화면용 A4 페이지 */
+.page {
+  min-height: 297mm;
+  padding: 18mm 18mm;
+  position: relative;
+  page-break-after: always;
+  break-after: page;
+}
+.page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+/* 화면 전용 — 페이지 사이 점선 구분 */
+.page + .page {
+  border-top: 1.5px dashed #b8c0cc;
+}
+
+/* 페이지 번호 (화면용) — 표지 제외 자동 카운터 */
+body { counter-reset: pagenum 0; }
+.page { counter-increment: pagenum; }
+.page:not(:first-of-type)::after {
+  content: "— " counter(pagenum) " —";
+  position: absolute;
+  bottom: 8mm;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', Arial, sans-serif;
+  font-size: 8.5pt;
+  color: #888;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+@media print {
+  .page:not(:first-of-type)::after { display: none; }
+}
+
+/* ── 인쇄 ── */
+@media print {
+  html { background: none; }
+  body { width: 100%; margin: 0; box-shadow: none; font-size: 10pt; line-height: 1.65; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page {
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    page-break-after: always;
+    break-after: page;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  .page + .page { border-top: none !important; }
+
+  /* 블록 단위 분리 방지 */
+  .section        { page-break-inside: avoid; break-inside: avoid; }
+  .insight, .insight-action, .insight-warn { page-break-inside: avoid; break-inside: avoid; }
+  .warning-banner, .summary-grid, .rec-grid, .compare,
+  .kpi-row, .signoff-grid, .stat-card,
+  .compare-box, .limit-box { page-break-inside: avoid; break-inside: avoid; }
+  table           { page-break-inside: avoid; break-inside: avoid; }
+  .main table     { page-break-inside: avoid; break-inside: avoid; }
+  table tr        { page-break-inside: avoid; break-inside: avoid; }
+
+  /* 헤더 고립 방지 */
+  h2, h3, .page-title, .section h2, .section h3 {
+    page-break-after: avoid; break-after: avoid;
+  }
+
+  /* 본문 밀도 미세조정 */
+  .main td { padding: 3px 7px !important; line-height: 1.35; }
+  .main th { padding: 3.5px 7px !important; }
+  .insight, .insight-action, .insight-warn { line-height: 1.6; }
+  .warning-banner { line-height: 1.65; }
+
+  /* 마지막 빈 페이지 방지 */
+  .doc-footer     { display: none; }
+  tr:hover td     { background: inherit !important; }
+  a { color: inherit; text-decoration: none; }
+}
+
+/* ══════════════════════════════════════
+   표지
+══════════════════════════════════════ */
+.cover {
+  min-height: 257mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cover-org-name {
+  font-size: 15pt;
+  font-weight: 900;
+  color: #1a3a6b;
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+}
+.cover-org-sub {
+  font-size: 9.5pt;
+  color: #6b7280;
+  line-height: 1.7;
+}
+.cover-rule {
+  height: 3px;
+  background: linear-gradient(to right, #1a3a6b 60%, #4a7fc1);
+  margin: 28px 0 60px;
+}
+.cover-doc-label {
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: #1a3a6b;
+  letter-spacing: 5px;
+  margin-bottom: 22px;
+}
+.cover-title-main {
+  font-size: 28pt;
+  font-weight: 900;
+  color: #111827;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+.cover-title-en {
+  font-size: 10pt;
+  color: #9ca3af;
+  font-style: italic;
+  margin-bottom: 56px;
+}
+
+.cover-meta {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10pt;
+}
+.cover-meta td {
+  padding: 10px 0 10px 2px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+  background: transparent !important;
+}
+.cover-meta tr:first-child td { border-top: 1px solid #e5e7eb; }
+.cover-meta td:first-child {
+  width: 110px;
+  color: #9ca3af;
+  font-size: 9.5pt;
+}
+.cover-meta td:last-child {
+  color: #1c1c2e;
+  font-weight: 500;
+}
+
+.cover-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.cover-stamp {
+  display: inline-block;
+  border: 1.5px solid #1a3a6b;
+  color: #1a3a6b;
+  font-size: 9pt;
+  font-weight: 700;
+  padding: 4px 14px;
+  letter-spacing: 1.5px;
+}
+.cover-ctl {
+  text-align: right;
+  font-size: 10pt;
+  color: #6b7280;
+  line-height: 1.7;
+}
+.cover-ctl strong { color: #1a3a6b; font-weight: 800; }
+
+/* ══════════════════════════════════════
+   목차 / 요약 페이지
+══════════════════════════════════════ */
+.page-title {
+  font-size: 17pt;
+  font-weight: 900;
+  color: #1a3a6b;
+  letter-spacing: -0.5px;
+  border-bottom: 2.5pt solid #1a3a6b;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+.page-title small {
+  display: block;
+  font-size: 9.5pt;
+  font-weight: 500;
+  color: #9ca3af;
+  letter-spacing: 1.5px;
+  margin-top: 5px;
+}
+
+.toc {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.toc li {
+  display: flex;
+  align-items: baseline;
+  font-size: 10pt;
+  padding: 4.5px 4px;
+  border-bottom: 1px dotted #d1d5db;
+}
+.toc li .num {
+  width: 36px;
+  flex-shrink: 0;
+  font-weight: 800;
+  color: #1a3a6b;
+}
+.toc li .label { flex: 1; color: #1f2937; word-break: keep-all; padding-right: 8px; }
+.toc li .dots {
+  flex: 1;
+  border-bottom: 1px dotted #cbd5e1;
+  margin: 0 10px;
+  transform: translateY(-3px);
+}
+.toc li .pg {
+  width: 40px;
+  text-align: right;
+  color: #6b7280;
+  font-size: 10pt;
+  flex-shrink: 0;
+}
+
+/* 핵심 요약 */
+.exec-summary { margin-top: 14px; }
+.exec-summary h3 {
+  font-size: 11pt;
+  font-weight: 800;
+  color: #1a3a6b;
+  margin-bottom: 7px;
+  padding-left: 12px;
+  border-left: 4px solid #1a3a6b;
+}
+.exec-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+}
+.exec-list li {
+  position: relative;
+  padding: 4px 4px 4px 22px;
+  font-size: 9.3pt;
+  line-height: 1.58;
+  border-bottom: 1px solid #f1f5f9;
+  word-break: keep-all;
+}
+.exec-list li:before {
+  content: "▸";
+  position: absolute;
+  left: 4px;
+  top: 5px;
+  color: #1a3a6b;
+  font-weight: 800;
+}
+.exec-list li strong { color: #1a3a6b; }
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+  margin: 8px 0 12px;
+}
+.kpi-row .kpi {
+  background: #f8f9fb;
+  border-top: 3px solid #1a3a6b;
+  padding: 7px 8px;
+  text-align: center;
+}
+.kpi-row .kpi.warn { border-top-color: #dc2626; }
+.kpi-row .kpi.mid  { border-top-color: #d97706; }
+.kpi-row .kpi.good { border-top-color: #059669; }
+.kpi-row .kpi .v { font-size: 15pt; font-weight: 900; color: #1a3a6b; line-height: 1.05; }
+.kpi-row .kpi.warn .v { color: #dc2626; }
+.kpi-row .kpi.mid  .v { color: #d97706; }
+.kpi-row .kpi.good .v { color: #059669; }
+.kpi-row .kpi .l { font-size: 8.3pt; color: #6b7280; margin-top: 5px; line-height: 1.45; }
+
+/* ══════════════════════════════════════
+   본문
+══════════════════════════════════════ */
+/* 경고 배너 */
+.warning-banner {
+  background: #fff8e1;
+  border-left: 4px solid #f59e0b;
+  padding: 11px 18px;
+  margin-bottom: 14px;
+  font-size: 9.3pt;
+  line-height: 1.75;
+  word-break: keep-all;
+}
+.warning-banner strong { color: #92400e; }
+
+/* 섹션 */
+.section {
+  background: #f8f9fb;
+  padding: 16px 20px 18px;
+  margin-bottom: 14px;
+}
+.section h2 {
+  font-size: 13.5pt;
+  font-weight: 800;
+  color: #1a3a6b;
+  border-bottom: 2pt solid #1a3a6b;
+  padding-bottom: 7px;
+  margin-bottom: 14px;
+  letter-spacing: -0.2px;
+}
+.section h3 {
+  font-size: 10.3pt;
+  font-weight: 700;
+  color: #1a3a6b;
+  background: #e8edf5;
+  border-left: 3px solid #1a3a6b;
+  padding: 4px 12px;
+  margin: 11px 0 8px;
+  letter-spacing: -0.2px;
+}
+
+/* 요약 카드 */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.stat-card {
+  background: #fff;
+  padding: 14px 8px;
+  text-align: center;
+}
+.stat-card .num   { font-size: 22pt; font-weight: 900; color: #1a3a6b; line-height: 1.1; }
+.stat-card .label { font-size: 8.5pt; color: #6b7280; margin-top: 5px; line-height: 1.5; }
+.stat-card.warn .num { color: #dc2626; }
+.stat-card.mid  .num { color: #d97706; }
+.stat-card.good .num { color: #059669; }
+
+/* 테이블 */
+.main table { width: 100%; border-collapse: collapse; font-size: 8.85pt; margin: 5px 0; }
+.main th {
+  background: #1a3a6b; color: #fff;
+  padding: 4px 8px; text-align: left;
+  font-weight: 700; font-size: 8.85pt;
+}
+.main td { padding: 3.5px 8px; word-break: keep-all; line-height: 1.4; }
+.main tbody tr:nth-child(even) td { background: #f0f3f8; }
+.main tbody tr:nth-child(odd)  td { background: #fff; }
+.main td.num       { text-align: center; font-weight: 700; }
+.main td.highlight { color: #dc2626; font-weight: 700; }
+.main td.positive  { color: #059669; font-weight: 700; }
+@media screen { .main tr:hover td { background: #e8edf5 !important; } }
+
+/* 막대 그래프 */
+.bar-row {
+  display: flex; align-items: center;
+  gap: 10px; margin: 3px 0; font-size: 9pt;
+}
+.bar-label { width: 215px; flex-shrink: 0; text-align: right; color: #374151; line-height: 1.4; word-break: keep-all; font-size: 8.7pt; }
+.bar-wrap  { flex: 1; background: #e2e6ee; height: 18px; }
+.bar-fill  {
+  height: 100%; background: #1a3a6b;
+  display: flex; align-items: center;
+  padding-left: 8px; color: #fff;
+  font-size: 8pt; font-weight: 700;
+  white-space: nowrap; min-width: 36px;
+}
+.bar-fill.red    { background: #dc2626; }
+.bar-fill.orange { background: #d97706; }
+.bar-fill.green  { background: #059669; }
+
+/* 리커트 배지 */
+.mean-badge {
+  display: inline-block; background: #1a3a6b;
+  color: #fff; padding: 2px 8px;
+  font-size: 9pt; font-weight: 800;
+}
+.mean-badge.high { background: #059669; }
+.mean-badge.mid  { background: #d97706; }
+.mean-badge.low  { background: #dc2626; }
+
+/* 인사이트 박스 */
+.insight {
+  background: #eef3fb; border-left: 4px solid #1a3a6b;
+  padding: 9px 14px; margin: 8px 0;
+  font-size: 9.1pt; line-height: 1.7;
+  word-break: keep-all;
+}
+.insight strong { color: #1a3a6b; }
+.insight-action {
+  background: #edfaf3; border-left: 4px solid #059669;
+  padding: 9px 14px; margin: 8px 0;
+  font-size: 9.1pt; line-height: 1.7;
+  word-break: keep-all;
+}
+.insight-action strong { color: #065f46; }
+.insight-warn {
+  background: #fef2f2; border-left: 4px solid #dc2626;
+  padding: 9px 14px; margin: 8px 0;
+  font-size: 9.1pt; line-height: 1.7;
+  word-break: keep-all;
+}
+.insight-warn strong { color: #991b1b; }
+
+/* 비교 박스 */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+.compare-box { background: #fff; padding: 11px 14px; }
+.compare-box h4 {
+  font-size: 9.3pt; font-weight: 700; color: #1a3a6b;
+  margin-bottom: 7px; padding-bottom: 4px;
+  border-bottom: 1.5pt solid #1a3a6b;
+}
+.compare-box li { font-size: 8.8pt; margin: 3px 0 3px 16px; color: #374151; line-height: 1.55; word-break: keep-all; }
+
+/* 한계 박스 */
+.limit-box { background: #fff9f0; padding: 10px 14px; font-size: 9pt; }
+.limit-box li { margin: 4px 0 4px 18px; line-height: 1.65; word-break: keep-all; }
+.limit-box li strong { color: #92400e; }
+
+/* 제언 카드 */
+.rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.rec-card { padding: 9px 12px; page-break-inside: avoid; break-inside: avoid; background: #edfaf3; }
+.rec-card.urgent { background: #fef2f2; }
+.rec-card.mid    { background: #fffbeb; }
+.rec-card h4 { font-size: 9.5pt; font-weight: 700; margin-bottom: 6px; }
+.rec-card h4 span {
+  display: inline-block; background: #059669; color: #fff;
+  padding: 2px 8px; font-size: 8pt; font-weight: 700; margin-right: 5px;
+}
+.rec-card.urgent h4 span { background: #dc2626; }
+.rec-card.mid    h4 span { background: #d97706; }
+.rec-card p { font-size: 8.9pt; color: #374151; line-height: 1.6; word-break: keep-all; }
+
+/* 문서 푸터 (화면 전용) */
+.doc-footer {
+  text-align: center; color: #9ca3af; font-size: 8.5pt;
+  margin-top: 24px; padding-top: 12px;
+}
+
+/* 유틸리티 */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+p.sub   { font-size: 9pt; color: #6b7280; margin-bottom: 12px; line-height: 1.75; }
+p.label { font-size: 9.5pt; font-weight: 700; margin-bottom: 8px; color: #1a3a6b; }
+.nowrap { white-space: nowrap; }
+.tag-rev { display: inline-block; background: #fee2e2; color: #991b1b; font-size: 7.5pt; font-weight: 700; padding: 1px 6px; margin-left: 4px; vertical-align: 1px; letter-spacing: -0.3px; border-radius: 2px; }
+.bullet-tag { display: inline-block; background: #1a3a6b; color: #fff; font-size: 7.8pt; font-weight: 700; padding: 1px 7px; margin-right: 6px; letter-spacing: 0.3px; vertical-align: 1px; border-radius: 2px; }
+.bullet-tag.warn { background: #dc2626; }
+.bullet-tag.good { background: #059669; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     페이지 1 — 표지
+════════════════════════════════════ -->
+<section class="page">
+<div class="cover">
+  <div>
+    <div class="cover-org-name">DGIST 교수학습센터(CTL)</div>
+    <div class="cover-rule"></div>
+
+    <div class="cover-doc-label">분 석 보 고 서</div>
+    <div class="cover-title-main">강의평가 지표 개선<br>설문조사 분석보고서<span style="font-size:13pt; background:#e0e7ff; color:#1a3a6b; padding:4px 12px; border-radius:3px; margin-left:12px; vertical-align:9px; letter-spacing:0; font-weight:700;">v1.0</span></div>
+    <div class="cover-title-en">Course Evaluation Indicator Improvement — Survey Analysis Report</div>
+
+    <table class="cover-meta">
+      <tr><td>조사 대상</td><td>학생 2,680명 · 교원 205명</td></tr>
+      <tr><td>실 응답자</td><td>학생 119명 (응답률 4.4%) · 교원 39명 (응답률 19.0%)</td></tr>
+      <tr><td>조사 도구</td><td>Google Forms (온라인 자기기입식)</td></tr>
+      <tr><td>조사 기간</td><td>2026년 4월</td></tr>
+      <tr><td>분석 기준일</td><td><strong>2026년 5월 8일 (v1.0)</strong></td></tr>
+    </table>
+
+  </div>
+
+</div>
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 2 — 목차 + 핵심 요약
+════════════════════════════════════ -->
+<section class="page">
+<div class="page-title">
+  목차 · 핵심 요약
+  <small>CONTENTS &amp; EXECUTIVE SUMMARY</small>
+</div>
+
+<ul class="toc">
+  <li><span class="num">1.</span><span class="label">조사 개요 및 응답자 특성 (학부·대학원 분리)</span><span class="dots"></span><span class="pg">3–4</span></li>
+  <li><span class="num">2.</span><span class="label">교원 설문 분석 결과</span><span class="dots"></span><span class="pg">5–6</span></li>
+  <li><span class="num">3.</span><span class="label">학생 설문 분석 결과</span><span class="dots"></span><span class="pg">7–8</span></li>
+  <li><span class="num">4.</span><span class="label">교원·학생 공통 인식 비교</span><span class="dots"></span><span class="pg">9</span></li>
+  <li><span class="num">5.</span><span class="label">핵심 진단 — 신뢰의 악순환 &amp; DGIST 정체성 차원 매핑</span><span class="dots"></span><span class="pg">10</span></li>
+  <li><span class="num">6.</span><span class="label">시사점 및 제언 — 우선 추진 권고 9개</span><span class="dots"></span><span class="pg">11</span></li>
+  <li><span class="num">7.</span><span class="label">한계 및 결론 — 3층위 변화 매트릭스</span><span class="dots"></span><span class="pg">12</span></li>
+</ul>
+
+<div style="margin:1px 0 0; padding:3px 10px; background:#f1f5f9; border-left:3px solid #94a3b8; font-size:8.5pt; color:#475569; font-weight:600;">참고 자료 (Appendix) — 본문 결론을 보강하는 외부 근거</div>
+<ul class="toc" style="margin-top:0;">
+  <li style="padding:3px 0;"><span class="num" style="color:#64748b;">참고1</span><span class="label">글로벌 모범사례 및 학술 근거</span><span class="dots"></span><span class="pg">13</span></li>
+  <li style="padding:3px 0;"><span class="num" style="color:#64748b;">참고2</span><span class="label">세계 최고수준 대학 운용 사례 심층 분석</span><span class="dots"></span><span class="pg">14</span></li>
+  <li style="padding:3px 0;"><span class="num" style="color:#64748b;">참고3</span><span class="label">현행 12문항 → 개선안 비교표 &amp; 신규 권장 문항</span><span class="dots"></span><span class="pg">15</span></li>
+  <li style="padding:3px 0;"><span class="num" style="color:#64748b;">발행</span><span class="label">발행 정보 (Colophon) — 인용 양식 · 저작권</span><span class="dots"></span><span class="pg">16</span></li>
+</ul>
+
+<div class="exec-summary">
+  <h3>핵심 요약 (Executive Summary)</h3>
+
+  <div class="kpi-row">
+    <div class="kpi warn">
+      <div class="v">4.4%</div>
+      <div class="l">학생 응답률<br>(119/2,680)</div>
+    </div>
+    <div class="kpi mid">
+      <div class="v">19.0%</div>
+      <div class="l">교원 응답률<br>(39/205)</div>
+    </div>
+    <div class="kpi">
+      <div class="v">4.18 / 4.29</div>
+      <div class="l">강의유형별 차별화 필요<br>(교원/학생 평균)</div>
+    </div>
+    <div class="kpi warn">
+      <div class="v">38%</div>
+      <div class="l">최근 3학기 강의 미수정<br>교원 비율</div>
+    </div>
+  </div>
+
+  <ul class="exec-list">
+    <li><strong>공통 진단 ①</strong> 교원·학생 모두 “현 강의평가 결과가 실제 개선으로 연결되지 않는다”고 평가(교원 M=3.28 / 학생 M=3.05). 두 집단의 독립적 수렴.</li>
+    <li><strong>공통 진단 ②</strong> 강의유형별(이론·실험·UGRP·대학원) <span class="nowrap">차별화된 문항이</span> 필요하다는 데 양측이 강하게 동의(교원 M=4.18 / 학생 M=4.29).</li>
+    <li><strong>제도 신뢰 부재</strong> 교원의 82%가 “현 지표가 강의품질보다 학생만족도를 더 반영한다”에 동의(Q9 M=4.13). 미수정 1순위 사유 역시 “학생 선호도 반영(57%)”.</li>
+    <li><strong>활용 목적 분리 필요</strong> 인사제도 연계는 반대(M=2.74)이나 교수법 지원·포상은 동의(M=3.59). “제재”가 아닌 “개선 지원”으로 활용 목적을 재정의할 필요가 있다.</li>
+    <li><strong>학생 응답 동기 왜곡</strong> 응답 학생의 56%가 의무·강제 동기로 참여. 강제 응답 구조가 응답 품질을 낮추는 핵심 요인으로 작용한다.</li>
+    <li><strong>해석 한계</strong> 학생 응답률은 4.4%로 낮고, “1학년 40%” 수치는 학부 1학년(22%)이 아닌 <strong>대학원 1년차(58%) 집중</strong>에서 비롯된다. 학부·대학원 분리 해석이 필수이며, 무응답·자기선택 편향에 따른 단정적 일반화는 피해야 한다.</li>
+  </ul>
+
+  <h3 style="margin-top:18px;">우선 추진 권고 (Top 6)</h3>
+  <ul class="exec-list">
+    <li><strong>① 즉시</strong> 강의유형별 문항 차별화 (양 집단 강한 합의, 저항 적음).</li>
+    <li><strong>② 즉시</strong> 결과 피드백 구체화 — 항목별 점수 외 전년 비교·유사 과목 평균·개방형 요약 제공.</li>
+    <li><strong>③ 즉시</strong> <span style="background:#fef2f2; padding:0 4px;">DGIST 정체성 신규 문항 도입</span> — 비판적 사고·연구 연계·심리적 안전감 3개 축.</li>
+    <li><strong>④ 단기</strong> 활용 목적 재정립 — “인사 제재”→“개선 지원” 전환. <span style="background:#fffbeb; padding:0 4px;">상한제(ceiling) 모델</span>로 이분법 해소(하한선 패널티 + 우수 포상).</li>
+    <li><strong>⑤ 단기</strong> 성적열람 연계 방식 재검토 — 강제 대신 인센티브 기반 파일럿 시도.</li>
+    <li><strong>⑥ 단기</strong> <span style="background:#fef2f2; padding:0 4px;">중간강의성찰 격상 + 명칭 재정의</span> — 기말 평가 정교화보다 학기 중 개선 가능 도구가 효과 우선. "강의평가(만족도)" → "교수·학습 경험 조사".</li>
+  </ul>
+
+  <!-- 핵심 통찰 안내 박스 -->
+  <div style="margin-top:10px; padding:7px 12px; background:#1a3a6b; color:#fff; font-size:8.6pt; line-height:1.55; word-break:keep-all;">
+    <strong style="color:#fde68a;">▣ 본 보고서의 핵심 통찰</strong> — 본 분석의 결론은 "지표 개선"에 머물지 않는다.
+    <strong>지표 + 제도 + 문화</strong> 3층위가 맞물려 있는 <em>신뢰의 악순환</em>을 끊어야 평가가 개선으로 이어진다.
+    상세 진단은 5장(p.10), 변화 매트릭스는 7장(p.12)에서 다룬다.
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 3 — 조사 개요 + 응답자 특성
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="warning-banner">
+  <strong>⚠ 해석 전 필독 — 무응답 편향(Non-response Bias) 주의</strong><br>
+  학생 응답률 <strong>4.4%</strong>, 교원 응답률 <strong>19.0%</strong>입니다.
+  이 결과는 <em>전체 구성원의 의견</em>이 아니라 <em>자발적으로 응답한 집단의 의견</em>이며,
+  제도에 관심이 높거나 불만이 있는 구성원이 과대 대표되었을 가능성이 높습니다.
+  모든 수치는 이 한계 안에서 해석해야 합니다.
+</div>
+
+<div class="section">
+  <h2>1. 조사 개요 및 응답자 특성</h2>
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="num">2,680</div>
+      <div class="label">학생 대상자</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="num">4.4%</div>
+      <div class="label">학생 응답률<br>(119명)</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">205</div>
+      <div class="label">교원 대상자</div>
+    </div>
+    <div class="stat-card mid">
+      <div class="num">19.0%</div>
+      <div class="label">교원 응답률<br>(39명)</div>
+    </div>
+  </div>
+  <table>
+    <tr><th>항목</th><th>학생</th><th>교원</th></tr>
+    <tr><td>조사 도구</td><td colspan="2">Google Forms (온라인 자기기입식)</td></tr>
+    <tr><td>조사 기간</td><td colspan="2">2026년 4월</td></tr>
+    <tr><td>대상자 수</td><td>2,680명</td><td>205명</td></tr>
+    <tr><td>실응답 수</td><td>119명</td><td>39명</td></tr>
+    <tr><td>응답률</td><td class="highlight">4.4%</td><td>19.0%</td></tr>
+    <tr><td>주요 문항</td><td>리커트 5점 6문항 + 복수선택 + 주관식</td><td>리커트 5점 10문항 + 복수선택 + 주관식</td></tr>
+  </table>
+
+  <h3>1-1. 교원 응답자 특성 (n=39)</h3>
+  <div class="two-col">
+    <table>
+      <tr><th>교원 유형</th><th>n</th><th>%</th></tr>
+      <tr><td>전임교원</td><td class="num">34</td><td class="num">87%</td></tr>
+      <tr><td>비전임교원</td><td class="num">5</td><td class="num">13%</td></tr>
+    </table>
+    <table>
+      <tr><th>DGIST 재직기간</th><th>n</th><th>%</th></tr>
+      <tr><td>7년 이상</td><td class="num">16</td><td class="num">41%</td></tr>
+      <tr><td>3년 이상 ~ 7년 미만</td><td class="num">9</td><td class="num">23%</td></tr>
+      <tr><td>1년 이상 ~ 3년 미만</td><td class="num">8</td><td class="num">21%</td></tr>
+      <tr><td>1년 미만</td><td class="num">5</td><td class="num">13%</td></tr>
+    </table>
+  </div>
+  <div class="insight">
+    <strong>특이점:</strong> 응답 교원의 64%가 재직 3년 이상의 장기 교원이다.
+    신임 교원(1년 미만 13%)과 비전임(13%)은 상대적으로 적게 대표되었다.
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 3-2 — 학생 응답자 특성 (학부/대학원 분리)
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h3>1-2. 학생 응답자 특성 (n=119)</h3>
+  <p class="sub">학부생과 대학원생의 학년 구조가 본질적으로 다르므로 <strong>소속별로 분리</strong>하여 분석한다.</p>
+  <table>
+    <tr><th>소속</th><th>n</th><th>%</th><th>강의평가 경험 있음</th></tr>
+    <tr><td>대학원 (석사/박사/통합/전문대학원)</td><td class="num">60</td><td class="num">50.4%</td><td class="num">71.7%</td></tr>
+    <tr><td>학부/학과</td><td class="num">59</td><td class="num">49.6%</td><td class="num">79.7%</td></tr>
+    <tr><td><strong>합계</strong></td><td class="num"><strong>119</strong></td><td class="num"><strong>100%</strong></td><td class="num">75.6%</td></tr>
+  </table>
+
+  <div class="two-col">
+    <table>
+      <tr><th>학부 학년 (n=59)</th><th>n</th><th>%</th></tr>
+      <tr><td>1학년</td><td class="num">13</td><td class="num">22.0%</td></tr>
+      <tr><td>2학년</td><td class="num">13</td><td class="num">22.0%</td></tr>
+      <tr><td>3학년</td><td class="num"><strong>19</strong></td><td class="num"><strong>32.2%</strong></td></tr>
+      <tr><td>4학년 이상</td><td class="num">14</td><td class="num">23.7%</td></tr>
+    </table>
+    <table>
+      <tr><th>대학원 연차 (n=60)</th><th>n</th><th>%</th></tr>
+      <tr><td>1년차</td><td class="num highlight">35</td><td class="num highlight">58.3%</td></tr>
+      <tr><td>2년차</td><td class="num">19</td><td class="num">31.7%</td></tr>
+      <tr><td>3년차</td><td class="num">3</td><td class="num">5.0%</td></tr>
+      <tr><td>4년차 이상</td><td class="num">3</td><td class="num">5.0%</td></tr>
+    </table>
+  </div>
+
+  <div class="bar-row"><span class="bar-label">학부 3학년</span><div class="bar-wrap"><div class="bar-fill green" style="width:32%">19명 (32.2%) · 학부 최다</div></div></div>
+  <div class="bar-row"><span class="bar-label">대학원 1년차</span><div class="bar-wrap"><div class="bar-fill red" style="width:58%">35명 (58.3%) · 대학원 단일 최다</div></div></div>
+  <div class="bar-row"><span class="bar-label">대학원 2년차</span><div class="bar-wrap"><div class="bar-fill orange" style="width:32%">19명 (31.7%)</div></div></div>
+
+  <div class="insight">
+    <strong>학부 분포 특징:</strong> 1·2학년(각 22.0%) · 3학년(32.2%) · 4학년 이상(23.7%)으로
+    <em>고학년이 다소 많은 비교적 균형잡힌 분포</em>이다.
+    강의평가를 여러 학기 경험한 응답자가 다수를 이룬다.
+  </div>
+  <div class="insight-warn">
+    <strong>대학원 분포 편중:</strong> 대학원 응답자의 <strong>90%(54/60)가 1·2년차</strong>에 집중되었고,
+    3년차 이상은 6명(10%)에 불과하다. 박사 후반·통합과정 후기 응답자가 거의 없어
+    <em>장기간 강의평가를 경험한 대학원생의 시각이 충분히 반영되지 않았을</em> 가능성이 있다.
+  </div>
+  <div class="insight-warn">
+    <strong>해석 시 주의 — “1학년 40%” 표현의 함정:</strong> 전체 합산 시 1학년 비율 40.3%(48명)는
+    <strong>학부 1학년(13명) + 대학원 1년차(35명)</strong>의 합산값이다.
+    두 집단은 학습 단계 · 강의평가 경험 · 기대치가 크게 달라, 단일 “1학년” 카테고리로 묶어 해석하면 오류가 발생한다.
+    <strong>실제 학부 1학년 비율은 22.0%</strong>로, 학부 내 과대대표 수준은 미미하다.
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 4 — 교원 분석 (1)
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h2>2. 교원 설문 분석 결과 (1/2)</h2>
+
+  <h3>2-1. 강의평가 결과 활용 실태 (Q4: 최근 3학기 강의수정 횟수)</h3>
+  <div class="bar-row"><span class="bar-label">0번 (없었다)</span><div class="bar-wrap"><div class="bar-fill red" style="width:38%">15명 (38%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">1번</span><div class="bar-wrap"><div class="bar-fill" style="width:23%">9명 (23%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">2번</span><div class="bar-wrap"><div class="bar-fill" style="width:21%">8명 (21%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">3번 이상</span><div class="bar-wrap"><div class="bar-fill green" style="width:18%">7명 (18%)</div></div></div>
+  <div class="insight-warn">
+    <span class="bullet-tag warn">발견</span>교원의 38%가 지난 3학기 동안 강의평가를 바탕으로 한 번도 강의를 수정하지 않았다.<br>
+    <span class="bullet-tag warn">의미</span>강의평가 제도의 핵심 목적인 교수법 개선이 절반 가까운 교원에게 작동하지 않고 있다.<br>
+    <span class="bullet-tag warn">행동</span>미수정 원인 중 해결 가능한 것(“결과가 구체적이지 않음”)부터 먼저 개선해야 한다.
+  </div>
+
+  <h3>2-2. 미수정 주요 이유 (Q5, 해당자 응답)</h3>
+  <div class="bar-row"><span class="bar-label">학생 선호도 반영이라 느낌</span><div class="bar-wrap"><div class="bar-fill red" style="width:57%">13명 (57%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">결과가 구체적이지 않음</span><div class="bar-wrap"><div class="bar-fill orange" style="width:32%">7명 (32%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">이미 충분히 잘 운영 중</span><div class="bar-wrap"><div class="bar-fill" style="width:32%">7명 (32%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">다른 피드백 더 활용</span><div class="bar-wrap"><div class="bar-fill" style="width:18%">4명 (18%)</div></div></div>
+  <div class="insight">
+    미수정 이유 1순위가 “학생 선호도 반영(57%)”이라는 인식은 교수자의 게으름이 아니라
+    <strong>제도 자체에 대한 신뢰 부재</strong>를 반영한다. 신뢰가 없으면 피드백은 행동으로 연결되지 않는다.
+  </div>
+
+  <h3>2-3. 현행 강의평가 지표 인식 (Q6~Q13, 5점 리커트)</h3>
+  <table>
+    <tr><th>문항</th><th>평균</th><th>SD</th><th>n</th><th style="text-align:center;">1점</th><th style="text-align:center;">2점</th><th style="text-align:center;">3점</th><th style="text-align:center;">4점</th><th style="text-align:center;">5점</th></tr>
+    <tr><td>Q6. 평가결과가 실제 강점/약점 잘 반영</td><td class="num"><span class="mean-badge mid">3.28</span></td><td class="num">1.13</td><td class="num">39</td><td class="num">4</td><td class="num">4</td><td class="num">13</td><td class="num">13</td><td class="num">5</td></tr>
+    <tr><td>Q7. 학생이 성의 있게 응답한다</td><td class="num"><span class="mean-badge mid">3.05</span></td><td class="num">1.13</td><td class="num">39</td><td class="num">5</td><td class="num">4</td><td class="num">19</td><td class="num">6</td><td class="num">5</td></tr>
+    <tr><td>Q8. 현 지표가 강의품질 충분히 측정</td><td class="num"><span class="mean-badge low">2.90</span></td><td class="num">1.26</td><td class="num">39</td><td class="num">8</td><td class="num">4</td><td class="num">16</td><td class="num">6</td><td class="num">5</td></tr>
+    <tr><td>Q9. ★ 현 지표가 학생만족도를 더 반영 <span class="tag-rev">역문항</span></td><td class="num"><span class="mean-badge low">4.13</span></td><td class="num">0.69</td><td class="num">38</td><td class="num">0</td><td class="num">0</td><td class="num">7</td><td class="num">19</td><td class="num">12</td></tr>
+    <tr><td>Q10. ★ 강의유형별 다른 지표 필요</td><td class="num"><span class="mean-badge high">4.18</span></td><td class="num">0.87</td><td class="num">39</td><td class="num">0</td><td class="num">2</td><td class="num">6</td><td class="num">14</td><td class="num">17</td></tr>
+    <tr><td>Q11. 성적열람 조건이 솔직한 응답 방해</td><td class="num"><span class="mean-badge mid">2.90</span></td><td class="num">1.46</td><td class="num">39</td><td class="num highlight">12</td><td class="num">2</td><td class="num">9</td><td class="num">10</td><td class="num">6</td></tr>
+    <tr><td>Q12. 개선할 필요 없다 <span class="tag-rev">역문항</span></td><td class="num"><span class="mean-badge low">2.77</span></td><td class="num">1.31</td><td class="num">39</td><td class="num">7</td><td class="num">11</td><td class="num">12</td><td class="num">2</td><td class="num">7</td></tr>
+    <tr><td>Q13. ★ 개선이 필요하다</td><td class="num"><span class="mean-badge mid">3.46</span></td><td class="num">1.24</td><td class="num">39</td><td class="num">5</td><td class="num">1</td><td class="num">13</td><td class="num">11</td><td class="num">9</td></tr>
+  </table>
+  <div class="insight">
+    <strong>핵심 패턴:</strong> Q9(M=4.13, 역문항)에서 교원의 82%가 “현 지표가 강의품질보다 학생만족도를 더 반영한다”에 동의(4~5점)했다.
+    Q8(M=2.90)과 함께 보면 교원들은 현행 지표가 <strong>측정해야 할 것(강의품질)을 측정하지 못한다</strong>고 판단하는 셈이다.
+  </div>
+  <div class="insight-warn">
+    <strong>Q11 분포 이상:</strong> 성적열람 조건이 응답을 방해한다는 문항에서 1점 12명 vs 4~5점 16명으로 <strong>의견이 양극화</strong>되었다.
+    단순 평균(2.90)만 보면 교원 내부의 의견 갈등이 드러나지 않는다.
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 5 — 교원 분석 (2)
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h2>2. 교원 설문 분석 결과 (2/2)</h2>
+
+  <h3>2-4. 강의평가 결과 활용 동의 (Q15·Q16)</h3>
+  <table>
+    <tr><th>문항</th><th>평균</th><th style="text-align:center;">1점</th><th style="text-align:center;">2점</th><th style="text-align:center;">3점</th><th style="text-align:center;">4점</th><th style="text-align:center;">5점</th></tr>
+    <tr><td>Q15. 인사제도(승진·평가)에 활용 동의</td><td class="num"><span class="mean-badge low">2.74</span></td><td class="num highlight">11</td><td class="num">4</td><td class="num">13</td><td class="num">6</td><td class="num">5</td></tr>
+    <tr><td>Q16. 우수강의 포상·교수법 지원에 활용 동의</td><td class="num"><span class="mean-badge mid">3.59</span></td><td class="num">2</td><td class="num">6</td><td class="num">10</td><td class="num positive">9</td><td class="num positive">12</td></tr>
+  </table>
+  <div class="insight-action">
+    <span class="bullet-tag good">발견</span>교원은 인사제도 연계(M=2.74, 반대 우세)와 포상·지원(M=3.59, 동의 우세)을 명확히 다르게 본다.<br>
+    <span class="bullet-tag good">의미</span>“강의평가 → 제재”는 거부하고 “강의평가 → 지원”은 수용한다 — 방향이 정반대인 두 개념이다.<br>
+    <span class="bullet-tag good">행동</span>강의평가 활용 목적을 인사평가에서 교수법 개선 지원으로 재정의하면 교원 참여 의지를 높일 수 있다.
+  </div>
+
+  <h3>2-5. 개선 필요 영역 (Q14, 복수응답, n=39)</h3>
+  <div class="bar-row"><span class="bar-label">측정 못하는 교수역량 있음 (문항 추가)</span><div class="bar-wrap"><div class="bar-fill" style="width:41%">16명 (41%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">문항 표현 명확화 필요</span><div class="bar-wrap"><div class="bar-fill" style="width:38%">15명 (38%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">강의유형별 차별화 필요</span><div class="bar-wrap"><div class="bar-fill" style="width:33%">13명 (33%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">결과 전달 방식 구체화</span><div class="bar-wrap"><div class="bar-fill" style="width:31%">12명 (31%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">행정 항목(수업계획서 등) 분리</span><div class="bar-wrap"><div class="bar-fill" style="width:28%">11명 (28%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">학기 중 중간 피드백 별도 도입</span><div class="bar-wrap"><div class="bar-fill orange" style="width:18%">7명 (18%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">소수 수강 과목 익명성 보호</span><div class="bar-wrap"><div class="bar-fill orange" style="width:15%">6명 (15%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">성적 연계 강제 응답 조건 변경</span><div class="bar-wrap"><div class="bar-fill orange" style="width:13%">5명 (13%)</div></div></div>
+
+  <h3>2-6. 주관식 응답 핵심 주제 (Q17, n=18/39, 46%)</h3>
+  <div class="compare">
+    <div class="compare-box">
+      <h4>반복 등장 주제</h4>
+      <ul>
+        <li>인사제도 연계 부적절 (복수 언급)</li>
+        <li>극단값(상하위 10%) 제외 요청</li>
+        <li>학생평가 신뢰도 — 성적과의 연관</li>
+        <li>소수 수강 과목 익명성 취약</li>
+        <li>조교 평가 제도 도입 요청</li>
+      </ul>
+    </div>
+    <div class="compare-box">
+      <h4>대표 인용</h4>
+      <ul>
+        <li>“과제가 많고 엄격하게 운영된 수업이 오히려 낮은 강의평가를 받은 경험”</li>
+        <li>“강의평가를 인사에 활용하면 교수의 사기를 꺾는 결과”</li>
+        <li>“학생 주관식 문항을 더 깊이 관찰할 필요”</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 6 — 학생 분석 (1)
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h2>3. 학생 설문 분석 결과 (1/2)</h2>
+
+  <h3>3-1. 강의평가 참여 경험 및 동기</h3>
+  <p class="sub">응답자의 <strong>76%</strong>가 강의평가 참여 경험 있음 (24%는 경험 없음)</p>
+  <p class="label">Q5. 강의평가 참여 주요 이유</p>
+  <div class="bar-row"><span class="bar-label">성적 확인 위해 어쩔 수 없이</span><div class="bar-wrap"><div class="bar-fill red" style="width:39%">47명 (39%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">수업 개선에 기여할 수 있다고 생각</span><div class="bar-wrap"><div class="bar-fill green" style="width:21%">25명 (21%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">교수님께 피드백 전달하고 싶어서</span><div class="bar-wrap"><div class="bar-fill" style="width:20%">24명 (20%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">학교 제도이므로 의무적으로</span><div class="bar-wrap"><div class="bar-fill" style="width:17%">20명 (17%)</div></div></div>
+  <div class="insight-warn">
+    <span class="bullet-tag warn">발견</span>응답 학생의 <strong>56%</strong>(47+20명)가 자율적 동기가 아닌 <em>의무·강제</em>로 응답한다.<br>
+    <span class="bullet-tag warn">역설</span>강제가 응답률을 높이지만 동시에 응답 품질을 낮춘다. 교원이 “학생이 성의 없게 응답한다(Q7 M=3.05)”고 느끼는 원인이 이 구조에 있다.
+  </div>
+
+  <h3>3-2. 현행 강의평가 문항 인식 (5점 리커트)</h3>
+  <table>
+    <tr><th>문항</th><th>평균</th><th>SD</th><th>n</th><th style="text-align:center;">1점</th><th style="text-align:center;">2점</th><th style="text-align:center;">3점</th><th style="text-align:center;">4점</th><th style="text-align:center;">5점</th></tr>
+    <tr><td>Q4. 솔직하고 성의 있게 응답한다</td><td class="num"><span class="mean-badge high">4.09</span></td><td class="num">1.17</td><td class="num">117</td><td class="num">8</td><td class="num">4</td><td class="num">15</td><td class="num">32</td><td class="num positive">58</td></tr>
+    <tr><td>Q6. 결과가 실제 개선에 반영된다</td><td class="num"><span class="mean-badge low">3.05</span></td><td class="num">1.16</td><td class="num">117</td><td class="num highlight">15</td><td class="num highlight">19</td><td class="num">40</td><td class="num">31</td><td class="num">12</td></tr>
+    <tr><td>Q7. 문항들이 이해하기 쉽다</td><td class="num"><span class="mean-badge high">4.16</span></td><td class="num">0.81</td><td class="num">116</td><td class="num">1</td><td class="num">1</td><td class="num">21</td><td class="num">48</td><td class="num positive">45</td></tr>
+    <tr><td>Q8. 애매하거나 어려운 문항 있다</td><td class="num"><span class="mean-badge high">2.11</span></td><td class="num">1.11</td><td class="num">117</td><td class="num positive">46</td><td class="num">29</td><td class="num">28</td><td class="num">11</td><td class="num">3</td></tr>
+    <tr><td>Q10. 문항들이 실제 중요한 것을 묻는다</td><td class="num"><span class="mean-badge mid">3.65</span></td><td class="num">0.99</td><td class="num">116</td><td class="num">5</td><td class="num">8</td><td class="num">31</td><td class="num">51</td><td class="num">21</td></tr>
+    <tr><td>Q11. ★ 강의유형별 다른 문항 필요</td><td class="num"><span class="mean-badge high">4.29</span></td><td class="num">0.91</td><td class="num">116</td><td class="num">1</td><td class="num">7</td><td class="num">9</td><td class="num">39</td><td class="num positive">60</td></tr>
+  </table>
+  <div class="insight">
+    <strong>Q4 vs Q5 역설:</strong> 학생들은 “솔직하게 응답한다(M=4.09)”고 하면서, 동시에 “어쩔 수 없이 한다(39%)”고 말한다.
+    이 둘은 모순이 아니다—<em>강제로 응답하더라도 그 안에서는 솔직하게 쓴다</em>는 뜻이다.
+    문제는 <strong>응답 동기</strong>에 있지, 응답 진실성에 있지 않다.
+  </div>
+  <div class="insight">
+    <strong>Q6(M=3.05) — 교원 인식과 일치:</strong> 학생과 교원 모두 “강의평가 결과가 실제 개선으로 이어진다”는 명제에 회의적이다.
+    두 집단이 제도의 같은 문제를 독립적으로 지적한다는 점에서 신뢰도 높은 발견이다.
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 7 — 학생 분석 (2)
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h2>3. 학생 설문 분석 결과 (2/2)</h2>
+
+  <h3>3-3. 학부 vs 대학원 교차분석</h3>
+  <p class="label" style="margin-bottom:4px;">(가) 리커트 5점 척도 — 평균 비교</p>
+  <table>
+    <tr><th>문항</th><th>학부 (n=59)</th><th>대학원 (n=60)</th><th>차이</th></tr>
+    <tr><td>Q4. 솔직하게 응답</td><td class="num">3.97</td><td class="num">4.22</td><td class="num">-0.25</td></tr>
+    <tr><td>Q6. 결과가 개선에 반영</td><td class="num">2.91</td><td class="num">3.19</td><td class="num">-0.28</td></tr>
+    <tr><td>Q7. 문항 이해 쉽다</td><td class="num">4.21</td><td class="num">4.12</td><td class="num">+0.09</td></tr>
+    <tr><td>Q10. 중요한 것을 묻는다</td><td class="num">3.58</td><td class="num">3.71</td><td class="num">-0.13</td></tr>
+    <tr><td>Q11. 강의유형별 다른 문항 필요</td><td class="num"><strong>4.41</strong></td><td class="num">4.17</td><td class="num highlight">+0.24</td></tr>
+  </table>
+
+  <p class="label" style="margin:9px 0 4px;">(나) Q5 참여 주요 이유 — 1순위 동기 비교 <span style="font-size:7.8pt; color:#6b7280; font-weight:400;">(단일 응답)</span></p>
+  <div class="bar-row"><span class="bar-label">학부 1순위 — 성적 확인</span><div class="bar-wrap"><div class="bar-fill red" style="width:47%">47% (강제 동기)</div></div></div>
+  <div class="bar-row"><span class="bar-label">대학원 1순위 — 수업 개선 기여</span><div class="bar-wrap"><div class="bar-fill green" style="width:30%">30% (자발 동기)</div></div></div>
+
+  <div class="insight">
+    리커트 평균(가)의 전반적 차이는 미미하다(Cohen's d 0.21–0.26, 작은 효과크기).
+    그러나 참여 동기(나)에서는 1순위가 정반대다 — 학부는 <strong>"성적 확인(47%)" 강제 동기가 1순위</strong>인 반면, 대학원은 <strong>"수업 개선 기여(30%)" 자발 동기가 1순위</strong>다.
+    <strong>학부생일수록 강제 응답 구조의 영향을 더 크게 받으며, 대학원생은 자발적 동기 비율이 상대적으로 높다.</strong>
+    이는 §6 권고 ⑤(성적 연계 인센티브 전환 파일럿을 대학원 과목 우선 시도)의 직접 근거가 된다.
+  </div>
+
+  <h3>3-4. 좋은 수업 평가 중요 요소 (Q12, 3개까지 복수응답)</h3>
+  <div class="bar-row"><span class="bar-label">수업내용 명확성·이해 쉬운 설명</span><div class="bar-wrap"><div class="bar-fill" style="width:75%">89명 (75%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">수업량·과제 부담 적절함</span><div class="bar-wrap"><div class="bar-fill" style="width:44%">52명 (44%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">시험·과제에 대한 구체적 피드백</span><div class="bar-wrap"><div class="bar-fill" style="width:39%">47명 (39%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">교수님의 성실함과 열정</span><div class="bar-wrap"><div class="bar-fill" style="width:38%">45명 (38%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">수업 목표·내용·평가 일관 연결</span><div class="bar-wrap"><div class="bar-fill" style="width:30%">36명 (30%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">질문·도움 요청 쉬운 분위기</span><div class="bar-wrap"><div class="bar-fill orange" style="width:27%">32명 (27%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">수업과 연구·실제 문제 연결</span><div class="bar-wrap"><div class="bar-fill orange" style="width:18%">21명 (18%)</div></div></div>
+  <div class="bar-row"><span class="bar-label">독립적 사고·탐구 이끄는 수업</span><div class="bar-wrap"><div class="bar-fill orange" style="width:17%">20명 (17%)</div></div></div>
+  <div class="insight">
+    <strong>지표 설계 시사점:</strong> “구체적 피드백”은 학생 선호 3위임에도 현행 강의평가 지표에서 직접 측정되지 않을 수 있다.
+    Q12 결과는 신규 문항 개발의 우선순위 기준으로 활용 가능하다.
+  </div>
+
+  <h3>3-5. 주관식 의견 핵심 주제 (Q13, n=20/119, 17%)</h3>
+  <div class="compare">
+    <div class="compare-box">
+      <h4>반복 등장 주제</h4>
+      <ul>
+        <li>성적 열람 연계 방식 개선 요청</li>
+        <li>학기 중(중간) 피드백 제도 도입</li>
+        <li>익명성 실질적 보장 문제</li>
+        <li>영어 강의 전환에 대한 불만 <span class="tag-rev">v2 강조</span></li>
+        <li>조교 평가 제도 도입</li>
+        <li>결과 미반영에 대한 냉소</li>
+      </ul>
+    </div>
+    <div class="compare-box">
+      <h4>주목할 인용</h4>
+      <ul>
+        <li>“익명이라 했지만 답변자를 특정할 수 있다는 느낌을 받아 솔직하게 쓰기 어렵다”</li>
+        <li>“강의 평가를 백날 해봤자 바뀌지 않는다는 게 자명하다”</li>
+        <li>“시험 전에 진행되어서 시험에 대한 피드백은 전혀 할 수 없다”</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:11px;">3-6. 영어 수업 환경 — 정량 미측정의 강한 신호</h3>
+  <div class="insight-warn" style="padding:8px 14px; line-height:1.65;">
+    학생 주관식 응답에서 영어 수업 전환 관련 의견이 <strong>복수 학생에 의해 반복</strong> 등장했다.
+    이는 현행 강의평가 정량 문항으로는 <em>전혀 포착되지 않는</em> 차원이며, 본 설문은 “지표 개선 필요성”을 묻는 설문임에도 학생들이 자발적으로 이 이슈를 제기했다는 점이 의미가 크다.
+    <br><br>
+    <span class="bullet-tag warn">대표 인용</span>“영어로 모든 수업이 전환되어서 수업을 아예 못 알아듣겠습니다.”<br>
+    <span class="bullet-tag warn">대표 인용</span>(외국인 학생) “명확한 소통 없이는 효과적인 학습이 불가능합니다. 한국어로만 전달될 때 외국인 학생들은 불이익을 겪고 있습니다.”
+  </div>
+  <div class="insight-action" style="padding:7px 14px; line-height:1.6;">
+    <strong>해석:</strong> 이 신호는 “교수자 평가”가 아니라 <strong>교육제도 모니터링</strong>의 영역이다.
+    교수자 개인의 강의평가 점수에 반영하면 외국인·신임 교원에 대한 체계적 편향(SET 학술 한계 참조)을 강화할 위험이 있다.
+    별도의 <strong>언어·소속감(belonging) 모니터링 지표</strong>로 분리 운영하고, 강의평가 결과를 영어 강의 정책 개선에 직접 연계하는 데이터 루프를 갖추는 것이 합당하다.
+    Stanford·UCL이 “소속감”을 독립 차원으로 채택한 사례(참고 1·2)와 정확히 같은 맥락이다.
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 9 — 비교 (4장) — 5장 분리
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h2>4. 교원·학생 공통 인식 비교</h2>
+  <table>
+    <tr><th>주제</th><th>교원 인식</th><th>학생 인식</th><th>수렴 여부</th></tr>
+    <tr><td>결과가 개선에 반영되는가</td><td>M=3.28 (보통)</td><td>M=3.05 (약간 부정)</td><td>✅ 수렴 — 둘 다 회의적</td></tr>
+    <tr><td>강의유형별 차별화 필요</td><td>M=4.18 (강하게 동의)</td><td>M=4.29 (강하게 동의)</td><td>✅ 수렴 — 강한 공통 요구</td></tr>
+    <tr><td>현 문항이 중요한 것 측정</td><td>M=2.90 (부정)</td><td>M=3.65 (중간)</td><td>⚠ 차이 — 교원이 더 비판적</td></tr>
+    <tr><td>성적열람 조건의 영향</td><td>M=2.90 (양분)</td><td>응답 이유 39% 강제</td><td>⚠ 관련 — 양쪽 모두 문제 인식</td></tr>
+    <tr><td>인사·포상 연계</td><td>인사 반대(2.74), 포상 동의(3.59)</td><td>문항 없음</td><td>— (학생 설문 미포함)</td></tr>
+  </table>
+  <div class="insight-action">
+    <strong>가장 중요한 발견:</strong> 교원과 학생이 <em>독립적으로</em> 같은 두 문제를 지적했다.<br>
+    ① “결과가 실제 개선으로 연결되지 않는다” &nbsp;② “강의유형별로 다른 평가가 필요하다”.<br>
+    두 집단의 공통 인식은 지표 개선 설계 방향의 최우선 기준이 된다.
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 10 — 5장 핵심 진단
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h2>5. 핵심 진단 — 신뢰의 악순환과 DGIST 정체성 갭</h2>
+  <p class="sub">본 설문이 드러낸 두 집단의 일치된 회의는 <strong>구조적 원인</strong>에서 비롯된다. 5장은 그 구조를 두 시각으로 도식화한다 — ① 시간 차원에서 작동하는 <em>신뢰의 악순환</em>, ② 내용 차원에서 드러나는 <em>DGIST 정체성과 현행 지표의 측정 갭</em>.</p>
+
+  <h3>5-1. 신뢰의 악순환(Vicious Cycle) — 자기충족적 예언 구조</h3>
+  <p style="font-size:9pt; line-height:1.65; word-break:keep-all; margin:5px 0 7px;">
+    학생 응답 동기(56% 의무·강제) · 교원 미수정률(38%) · 양 집단의 결과 회의(M=3.05/3.28) — 이 세 수치는 독립 사실이 아니라 <strong>한 사이클의 다른 시점</strong>에서 측정된 동일 현상이다.
+  </p>
+
+  <!-- 악순환 다이어그램 (CSS 박스 기반) -->
+  <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap:6px; margin:6px 0 4px;">
+    <div style="background:#fef2f2; border-top:3px solid #dc2626; padding:7px 8px; text-align:center;">
+      <div style="font-size:8pt; font-weight:800; color:#dc2626; margin-bottom:3px;">① 강제 응답</div>
+      <div style="font-size:7.6pt; color:#374151; line-height:1.4;">성적열람 조건<br>의무 56%</div>
+    </div>
+    <div style="background:#fef2f2; border-top:3px solid #dc2626; padding:7px 8px; text-align:center;">
+      <div style="font-size:8pt; font-weight:800; color:#dc2626; margin-bottom:3px;">② 응답 품질↓</div>
+      <div style="font-size:7.6pt; color:#374151; line-height:1.4;">교원 Q7<br>M=3.05</div>
+    </div>
+    <div style="background:#fef2f2; border-top:3px solid #dc2626; padding:7px 8px; text-align:center;">
+      <div style="font-size:8pt; font-weight:800; color:#dc2626; margin-bottom:3px;">③ 신뢰도 손실</div>
+      <div style="font-size:7.6pt; color:#374151; line-height:1.4;">교원 Q9<br>M=4.13</div>
+    </div>
+    <div style="background:#fef2f2; border-top:3px solid #dc2626; padding:7px 8px; text-align:center;">
+      <div style="font-size:8pt; font-weight:800; color:#dc2626; margin-bottom:3px;">④ 결과 무시</div>
+      <div style="font-size:7.6pt; color:#374151; line-height:1.4;">미수정 38%<br>(0회/3학기)</div>
+    </div>
+    <div style="background:#fef2f2; border-top:3px solid #dc2626; padding:7px 8px; text-align:center;">
+      <div style="font-size:8pt; font-weight:800; color:#dc2626; margin-bottom:3px;">⑤ 개선 부재</div>
+      <div style="font-size:7.6pt; color:#374151; line-height:1.4;">학생 Q6<br>M=3.05</div>
+    </div>
+    <div style="background:#fef2f2; border-top:3px solid #dc2626; padding:7px 8px; text-align:center;">
+      <div style="font-size:8pt; font-weight:800; color:#dc2626; margin-bottom:3px;">⑥ 학생 냉소</div>
+      <div style="font-size:7.6pt; color:#374151; line-height:1.4;">“백날 해봤자<br>안 바뀐다”</div>
+    </div>
+  </div>
+  <div style="text-align:center; font-size:9pt; color:#dc2626; font-weight:800; margin:2px 0 8px; letter-spacing:1px;">↻ &nbsp;&nbsp; 다시 ① 강제 응답 (다음 학기) &nbsp;&nbsp; ↻</div>
+
+  <div class="insight-warn" style="padding:8px 14px; line-height:1.65;">
+    <strong>핵심 진단:</strong> 어떤 한 칸을 “더 잘 측정”해도 사이클은 닫힌다.
+    <em>지표 개선만으로는 충분하지 않다</em>는 결론이 여기서 도출된다. 적어도 두 지점 — <strong>① 응답 동기 구조</strong>와 <strong>④–⑤ 결과 활용·전달 구조</strong> — 를 동시에 끊어야 사이클이 풀린다.
+  </div>
+  <div class="insight-action" style="padding:8px 14px; line-height:1.65;">
+    <strong>차단 전략:</strong>
+    <span class="bullet-tag good">① 차단</span>강제 응답 구조 완화(인센티브 파일럿) → <em>응답 품질↑</em><br>
+    <span class="bullet-tag good">④ 차단</span>결과 전달 방식 구체화(차원별 프로파일·전년 비교·CTL 코칭) → <em>교원 활용도↑</em><br>
+    <span class="bullet-tag good">⑤ 차단</span>학생 가시 피드백 루프(“이 평가가 어떻게 반영됐는지” 다음 학기 공지) → <em>학생 냉소↓</em>
+  </div>
+
+  <h3 style="margin-top:13px;">5-2. DGIST 정체성 vs 현행 지표 — 측정 갭 매핑</h3>
+  <p style="font-size:9pt; line-height:1.65; word-break:keep-all; margin:5px 0 7px;">
+    “강의유형별 차별화”가 양 집단 강한 합의(M=4.18/4.29)이지만, <em>왜 차별화가 필요한가</em>의 근본 이유는 DGIST 정체성에서 측정해야 할 차원이 빠져 있기 때문이다.
+    글로벌 모범사례(참고 2)와 본 데이터의 학생 “좋은 수업 요소”(Q12, p.7) 우선순위를 교차하면 다음 갭이 드러난다.
+  </p>
+
+  <table style="font-size:8.6pt;">
+    <tr>
+      <th style="width:20%;">DGIST 정체성</th>
+      <th style="width:25%;">측정해야 할 차원</th>
+      <th style="width:18%;">학생 Q12 순위</th>
+      <th style="width:15%;">현행 측정</th>
+      <th style="width:22%;">참조 대학</th>
+    </tr>
+    <tr>
+      <td><strong>연구중심</strong></td>
+      <td>연구–교육 연계 (research-teaching nexus)</td>
+      <td class="num">7위 (18%)</td>
+      <td class="num highlight">✗ 없음</td>
+      <td>Cambridge, UCL</td>
+    </tr>
+    <tr>
+      <td><strong>이공계 정예</strong></td>
+      <td>비판적·독립적·창의적 사고 자극</td>
+      <td class="num">8위 (17%)</td>
+      <td class="num highlight">✗ 없음</td>
+      <td>Caltech, Oxford, Cambridge</td>
+    </tr>
+    <tr>
+      <td><strong>구성주의 정렬</strong></td>
+      <td>Constructive Alignment (목표·내용·평가 정합)</td>
+      <td class="num">5위 (30%)</td>
+      <td class="num">△ 부분(Q2)</td>
+      <td>ETH, Stanford, NUS, UCL</td>
+    </tr>
+    <tr>
+      <td><strong>피드백 문화</strong></td>
+      <td>피드백의 유용성·충분성·적시성 (3분화)</td>
+      <td class="num positive">3위 (39%)</td>
+      <td class="num">△ 부분(Q10)</td>
+      <td>UCL (Hattie d=0.73)</td>
+    </tr>
+    <tr>
+      <td><strong>소규모·국제화</strong></td>
+      <td>심리적 안전감 / 소속감 (belonging)</td>
+      <td class="num">6위 (27%)</td>
+      <td class="num">△ 간접(Q5)</td>
+      <td>Stanford, UCL, Cambridge</td>
+    </tr>
+    <tr>
+      <td><strong>영어 수업</strong></td>
+      <td>언어 접근성 / 포용적 환경</td>
+      <td class="num">— (주관식)</td>
+      <td class="num highlight">✗ 없음</td>
+      <td>Stanford, NUS</td>
+    </tr>
+    <tr>
+      <td><strong>융복합 인재</strong></td>
+      <td>실질적 역량 향상 (transfer)</td>
+      <td class="num">— (Q11 막연)</td>
+      <td class="num">△ 부분(Q11)</td>
+      <td>MIT, NUS, Stanford</td>
+    </tr>
+  </table>
+  <div class="insight-action" style="padding:8px 14px; line-height:1.65;">
+    <strong>매핑이 알려주는 것:</strong> 학생들이 “좋은 수업”이라 답한 상위 요소(피드백·정렬·소속감·연구 연계) 중 <strong>현행 강의평가에 직접 측정되는 항목은 1개에 불과</strong>하다.
+    “강의유형별 차별화”는 표층 요구이고, 본질적 요구는 <em>DGIST가 길러내려는 인재상</em>(연구자·창의적·융복합)을 측정하는 차원이 평가 도구에 들어 있어야 한다는 것이다. 6장 권고 ③(p.11)과 부록 [참고 3](p.15)에서 구체 문항 안을 제시한다.
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 11 — 6장 시사점 및 제언 (확장)
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h2>6. 시사점 및 제언</h2>
+  <div class="rec-grid">
+    <div class="rec-card urgent">
+      <h4><span>즉시 ①</span> 강의유형별 문항 차별화</h4>
+      <p>교원 M=4.18, 학생 M=4.29로 양 집단 모두 강하게 요구. 이론·실험·UGRP·대학원 과목별 별도 문항 세트 개발. 저항이 적고 효과가 명확한 최우선 과제.</p>
+    </div>
+    <div class="rec-card urgent">
+      <h4><span>즉시 ②</span> 결과 피드백 방식 구체화</h4>
+      <p>교원 미수정 2위 이유: “결과가 구체적이지 않아 무엇을 바꿀지 모름(32%)”. 항목별 점수 외에 전년도 비교, 유사 과목 평균, <strong>차원별 레이더 프로파일</strong>, 개방형 응답 요약, CTL 해석 코칭 연계 제공.</p>
+    </div>
+    <div class="rec-card urgent">
+      <h4><span>즉시 ③</span> DGIST 정체성 신규 문항 도입</h4>
+      <p>5-2 갭 매핑(p.10)에 따라 <strong>3개 핵심 문항</strong> 우선 추가: ① 비판적·독립적 사고 자극, ② 연구·실제 문제와의 연계 이해, ③ 질문·도움 요청이 쉬운 분위기(심리적 안전감). 행정 항목(수업계획서 등록 여부)은 분리하여 응답 부담 균형. <span style="font-size:7.8pt; color:#6b7280;">※ 이 분석 보고서가 권고하는 3개 후보 중, 동반 「개선방안 보고서 v1.0」 §3-3에서는 <strong>N1(CA 정렬)·N2(정보 신뢰성·한계 검증)·N3(연구 연계)</strong>가 최종 채택되었으며, 심리적 안전감은 D3 학습환경 차원의 Q5 표현 보완으로 흡수되었다. 추가로 D7 학습 주체성 차원 4문항(N4·N5·N6·N7)이 신설되었다.</span></p>
+    </div>
+
+    <div class="rec-card mid">
+      <h4><span>단기 ④</span> 성적열람 연계 방식 재검토</h4>
+      <p>학생 39%가 어쩔 수 없이 응답. 익명성 체감도 낮음. 강제 대신 인센티브(포인트·추첨) 파일럿 검토. <strong>참여율 80%의 신뢰 있는 평가가 100%의 형식적 평가보다 가치가 크다.</strong></p>
+    </div>
+    <div class="rec-card mid">
+      <h4><span>단기 ⑤</span> 활용 목적 — 상한제(ceiling) 모델 <span style="font-size:6.5pt; color:#fff; background:#1a3a6b; padding:1px 4px; margin-left:3px; vertical-align:1px;">v2 구체화</span></h4>
+      <p>교원 인사 연계 반대(M=2.74) vs 포상 동의(M=3.59) 양분의 해소책: <strong>① 인사 패널티는 하한선 미달 시에만</strong>(매우 낮은 점수가 누적된 경우), <strong>② 우수 포상에는 적극 활용</strong>, <strong>③ 단일 점수의 성과급 기계적 환산은 금지</strong>. 단일 SET 의존을 막는 동료평가·포트폴리오 병행은 중기 단계에서.</p>
+    </div>
+    <div class="rec-card mid">
+      <h4><span>단기 ⑥</span> 평가 명칭·철학 재정의</h4>
+      <p>“강의평가(만족도)” 명칭 자체가 <em>학생을 소비자로, 교원을 서비스 공급자로</em> 프레이밍한다. <strong>“교수·학습 경험 조사(Course &amp; Learning Experience Survey)”</strong>로 재정의하여 판정 도구가 아닌 성찰 도구임을 명시. 명칭은 응답 행동을 바꾼다.</p>
+    </div>
+
+    <div class="rec-card mid">
+      <h4><span>단기 ⑦</span> 중간강의성찰을 핵심 축으로 격상 <span style="font-size:6.5pt; color:#fff; background:#1a3a6b; padding:1px 4px; margin-left:3px; vertical-align:1px;">v2 격상</span></h4>
+      <p>기말 평가는 “이미 끝난 수업”의 사후 평가다. 중간성찰만이 <em>그 학기를 바꿀 수 있는 도구</em>다. ① 중간고사 후 2주 내 시점 명확화, ② 교원이 반영 결과를 학생에게 공지하는 <strong>피드백 루프 의무화</strong>, ③ Harvard HMS의 SGID(소집단 수업진단) CTL 신청제 파일럿. 사이클 차단의 가장 효과적 지점.</p>
+    </div>
+    <div class="rec-card">
+      <h4><span>중기 ⑧</span> 소수 수강 과목 익명성 보호</h4>
+      <p>소수 수강 과목에서 개인 특정 우려 반복 등장. <strong>Yale OCE 모델</strong> 참고 — 최소 5명 미만 수업은 개별 점수 비공개, 서술형만 전달. 학생에게도 명시적 공지로 신뢰 회복.</p>
+    </div>
+    <div class="rec-card">
+      <h4><span>중기 ⑨</span> 다원·다출처 평가 점진 도입</h4>
+      <p>SET 학술 한계(p.13 참고1)에 따라 <strong>인사·포상에서 SET 단일 의존 탈피</strong>. USC 2018 모델·UC Berkeley COT 참고하여 동료 관찰·교수포트폴리오·교수자 성찰문 병행 단계적 도입. CTL이 워크숍·루브릭·컨설팅 채널을 운영.</p>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:11px;">
+    <strong>권고의 묶음 구조:</strong> ①②③은 즉시 실행 가능한 <em>지표 차원</em>의 변화, ④⑤⑥⑦은 단기 가능한 <em>제도·문화 차원</em>의 변화, ⑧⑨는 다년 로드맵을 요구하는 <em>구조 차원</em>의 변화다.
+    5장에서 진단한 악순환을 끊으려면 세 층위가 동시에 움직여야 한다 (다음 페이지 7-3 매트릭스 참조).
+  </div>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 9 — 한계 + 결론
+════════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section">
+  <h2>7. 한계 및 결론</h2>
+
+  <h3>7-1. 분석 한계 및 주의사항</h3>
+  <div class="limit-box">
+    <ul>
+      <li><strong>극심한 무응답 편향:</strong> 학생 응답률 4.4%(95% CI 3.7–5.2%)는 통계적 대표성을 보장하기 어렵고, 최소 권고 응답률(일반적으로 30–40%)에 크게 미치지 못한다. 이 결과로 “DGIST 학생의 의견”을 단정해서는 안 된다.</li>
+      <li><strong>자기선택 편향:</strong> 강의평가 제도에 불만이 있거나 관심이 높은 학생·교원이 더 많이 응답했을 가능성이 높다. 전반적 만족도가 실제보다 낮게 나타날 수 있다.</li>
+      <li><strong>학부·대학원 이질적 편향 구조:</strong> 전체 “1학년 40%”는 학부 1학년(13명, 22%)과 대학원 1년차(35명, 58%)의 합산이다. 학부는 1·4학년이 비교적 고르게 분포하나, 대학원은 1·2년차가 90%로 과중 대표되었으며 박사 후반·통합과정 후기의 시각이 거의 반영되지 않았다.</li>
+      <li><strong>강의평가 미경험자 비중:</strong> 학생 응답자의 24%가 강의평가 미경험자로, 시스템 경험 기반의 판단보다 인식·기대가 반영될 수 있다.</li>
+      <li><strong>교원 전임 편중:</strong> 응답 교원의 87%가 전임교원. 비전임·겸임 교원의 경험은 충분히 반영되지 않았다.</li>
+      <li><strong>표본 소규모·효과크기:</strong> 교원 n=39는 부분집단 분석(재직기간별·강의유형별) 시 셀 크기가 너무 작아 통계 검정 적용이 제한된다. 학부 vs 대학원 리커트 평균 차이는 Cohen’s d 0.21–0.26 수준의 <strong>작은 효과크기(small effect)</strong>로, 직관적 차이로 다룰 수는 있으나 교육적 개입의 단독 근거로 쓰기에는 부족하다.</li>
+      <li><strong>공통방법 편향(common-method bias):</strong> 교원·학생 두 설문을 독립 수집한 점은 편향을 완화하지만, 각 설문 내부의 동일 자기기입 방식으로 인한 분산 부풀림은 잔존한다.</li>
+      <li><strong>시점 한계:</strong> 강의평가 지표 개선 논의가 집중된 시점의 의견으로, 일상적 상황과 다를 수 있다.</li>
+      <li><strong>SET 자체의 구조적 한계:</strong> Uttl, White &amp; Gonzalez(2017) 메타분석은 학생 강의평가(SET) 점수와 실제 학습성과 간의 의미 있는 상관이 없음을 보고했으며, Boring, Ottoboni &amp; Stark(2016)는 성별·학점기대에 따른 체계적 편향을 입증하였다. 본 설문 또한 이 한계에서 자유롭지 않으므로, 교원 평가에서 단일 지표로서의 SET 비중은 제한적으로 설정해야 한다.</li>
+      <li><strong>측정되지 않는 차원의 신호:</strong> 학생 주관식 응답에서 영어 수업 환경·익명성 체감·결과 미반영 냉소가 반복 등장했다. 이들은 정량 문항으로 포착되지 않은 <em>제도 모니터링 영역</em>의 강한 신호이며, 본 보고서의 정량 분석은 이 차원의 심각도를 과소 추정할 수 있다. <span class="tag-rev">v2 추가</span></li>
+    </ul>
+  </div>
+
+  <h3>7-2. 결론 — 두 집단의 독립적 수렴</h3>
+  <div class="insight-action">
+    본 분석은 응답률의 한계에도 불구하고 <strong>교원·학생 두 집단의 독립적 수렴</strong>이라는 강력한 신호를 확인하였다.<br>
+    ① 결과가 실제 개선으로 연결되지 않는다는 인식, ② 강의유형별 차별화된 평가가 필요하다는 요구—
+    이 두 가지는 두 집단 모두에서 일관되게 나타났으며, 국제 학계의 <strong>다원·다출처 평가(multiple measures)</strong> 권고와도 방향이 일치한다.
+    따라서 이는 강의평가 지표 개선의 <strong>제1 설계 원칙</strong>으로 채택할 만한 충분한 근거를 제공한다.
+  </div>
+
+  <h3 style="margin-top:11px;">7-3. 지표·제도·문화 — 3층위 변화 매트릭스</h3>
+  <p style="font-size:9pt; line-height:1.65; word-break:keep-all; margin:5px 0 7px;">
+    5장의 악순환 진단이 알려주듯, 어느 한 층위만 손대면 시스템은 다시 닫힌다. 세 층위가 함께 움직여야 한다.
+  </p>
+  <table style="font-size:8.7pt;">
+    <tr>
+      <th style="width:14%;">층위</th>
+      <th style="width:36%;">현재 상태</th>
+      <th style="width:36%;">목표 상태</th>
+      <th style="width:14%;">관련 권고</th>
+    </tr>
+    <tr>
+      <td><strong>지표</strong><br><span style="font-size:7.5pt; color:#6b7280;">무엇을 묻는가</span></td>
+      <td>만족도 중심 · 행정 항목 혼재(Q1) · DGIST 정체성 부재(연구·창의·소속감)</td>
+      <td class="positive">학습 경험·성과 중심 · 차원 분리 · 연구·융복합·국제화 차원 포함 · 강의유형별 모듈</td>
+      <td class="num">①②③⑧</td>
+    </tr>
+    <tr>
+      <td><strong>제도</strong><br><span style="font-size:7.5pt; color:#6b7280;">어떻게 운영하는가</span></td>
+      <td>강제 응답(성적열람 연계) · 기말 단회 · 점수만 전달 · 인사 직접 환산 우려</td>
+      <td class="positive">자율 응답+인센티브 · 중간+기말 이원 · 차원별 프로파일 전달 · 상한제 모델</td>
+      <td class="num">④⑤⑦⑨</td>
+    </tr>
+    <tr>
+      <td><strong>문화</strong><br><span style="font-size:7.5pt; color:#6b7280;">어떻게 받아들이는가</span></td>
+      <td>판정 도구로 인식 · 교원 방어적 · 학생 형식적·냉소 · 결과 미가시</td>
+      <td class="positive">성찰 도구로 인식 · 교원 자발 활용 · 학생 진지한 참여 · 반영 결과 가시화</td>
+      <td class="num">⑥⑦</td>
+    </tr>
+  </table>
+
+  <!-- 가장 중요한 한 가지 -->
+  <h3 style="margin-top:11px;">7-4. 가장 중요한 한 가지</h3>
+  <div style="background:#1a3a6b; color:#fff; padding:13px 18px; line-height:1.75; word-break:keep-all; font-size:9.5pt;">
+    아홉 권고 중 단 하나를 꼽는다면 — <strong style="color:#fde68a;">“이 강의평가 결과가 실제로 수업을 바꾼다”는 경험을 학생과 교원 모두에게 만드는 것</strong>이다.<br>
+    그 경험이 한 번이라도 쌓이면 ⑤ 결과 무시는 ④ 결과 활용으로, ⑥ 학생 냉소는 ① 자발 응답으로 뒤집힌다 (5-1 사이클의 반대 방향 회전).<br>
+    지표·제도·문화 각각의 권고는 <em>이 단 하나의 경험을 만들기 위한 조건</em>이지, 그 자체가 목적이 아니다.
+    따라서 권고 ②(결과 피드백 구체화)와 ⑦(중간성찰 격상 + 피드백 루프)이 <strong>최단 거리로 이 경험을 만드는 두 지렛대</strong>이며, 가용 자원이 제한된다면 이 둘부터 집중 투입하기를 권한다.
+  </div>
+
+</div>
+
+
+
+</div><!-- /main -->
+</section>
+
+<!-- ══════════════════════════════════
+     페이지 11 — 글로벌 모범사례 및 학술 근거
+══════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section" style="padding:11px 18px 12px; margin-bottom:8px;">
+  <div style="display:inline-block; padding:2px 9px; background:#e2e8f0; color:#475569; font-size:8.5pt; font-weight:700; border-radius:3px; letter-spacing:0.5px; margin-bottom:4px;">[참고 1 · APPENDIX 1]</div>
+  <h2 style="margin-bottom:7px; padding-bottom:5px;">글로벌 모범사례 및 학술 근거</h2>
+
+  <h3 style="margin:5px 0 4px; padding:3px 11px;">A1-1. 학생 강의평가(SET) 관련 핵심 학술 근거</h3>
+  <div class="insight-warn" style="padding:6px 12px; margin:3px 0; font-size:8.75pt; line-height:1.55;">
+    <strong>· SET–학습성과 무상관</strong> — Uttl, White &amp; Gonzalez(2017)는 다분반(multisection) 메타분석 재검증을 통해,
+    기존 보고된 상관이 표본 크기·출간 편향(publication bias)의 소산임을 입증.<br>
+    <strong>· 성별·학점 기대 편향</strong> — Boring, Ottoboni &amp; Stark(2016)는 자연·무작위 실험 두 자료에서
+    여성 교원의 체계적 저평가, 학점 기대 상승 시 평점 동반 상승을 확인.<br>
+    <strong>· 정책 시사점</strong> — SET는 <em>하나의 자료원</em>으로는 유효하나, 인사·포상의 <em>단일 지표</em>로는 부적합.
+  </div>
+
+  <h3 style="margin:6px 0 4px; padding:3px 11px;">A1-2. 국제 권고 — 다원·다출처 평가(Multiple Measures)</h3>
+  <div class="compare" style="margin:3px 0; gap:8px;">
+    <div class="compare-box" style="padding:8px 12px;">
+      <h4 style="font-size:9pt; margin-bottom:5px; padding-bottom:3px;">AAUP·UC·Berkeley COT 공통 권고</h4>
+      <ul style="margin:0; padding:0;">
+        <li style="font-size:8.55pt; margin:2px 0 2px 14px; line-height:1.5;">학생 평가 + <strong>동료 관찰(Peer Observation)</strong> + 자기성찰 + 교수포트폴리오 병행</li>
+        <li style="font-size:8.55pt; margin:2px 0 2px 14px; line-height:1.5;">학생 설문은 학습량·소통·과제 등 <strong>학생이 관찰 가능한 측면</strong>에 국한</li>
+        <li style="font-size:8.55pt; margin:2px 0 2px 14px; line-height:1.5;"><strong>개선용(formative)</strong>과 <strong>의사결정용(summative)</strong>으로 평가 목적 분리</li>
+        <li style="font-size:8.55pt; margin:2px 0 2px 14px; line-height:1.5;">단일 문항 의존 금지, <strong>편향 보정 절차</strong> 문서화</li>
+      </ul>
+    </div>
+    <div class="compare-box" style="padding:8px 12px;">
+      <h4 style="font-size:9pt; margin-bottom:5px; padding-bottom:3px;">세계 주요 대학 운용 사례</h4>
+      <ul style="margin:0; padding:0;">
+        <li style="font-size:8.55pt; margin:2px 0 2px 14px; line-height:1.5;"><strong>Stanford</strong> — SET를 “효과성 측정의 <em>하나의</em> 입력”으로 명시, 동료·자기성찰과 함께 삼각측정</li>
+        <li style="font-size:8.55pt; margin:2px 0 2px 14px; line-height:1.5;"><strong>UC Berkeley</strong> — 단일 종합 문항 폐지, 교수포트폴리오와 원자료(raw) 학생 의견 병행 제출</li>
+        <li style="font-size:8.55pt; margin:2px 0 2px 14px; line-height:1.5;"><strong>Harvard · UND · Miami(OH)</strong> — <strong>SGID</strong>(Small Group Instructional Diagnosis) 제도화로 학기 중 개선</li>
+        <li style="font-size:8.55pt; margin:2px 0 2px 14px; line-height:1.5;"><strong>UC Academic Council(2020)</strong> — 주 평가는 동료 평가, SET 활용 시 편향 경고문 포함 권고</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin:6px 0 4px; padding:3px 11px;">A1-3. DGIST 적용 권고 — 세 가지 구조적 보완점</h3>
+  <div class="insight-action" style="padding:5px 12px; margin:3px 0; font-size:8.75pt; line-height:1.5;">
+    <strong>① 다원 평가 체계 도입</strong> — 현행 SET 일변도에서 벗어나, 동료 관찰 · 교수자 자기성찰 · 교수포트폴리오를 결합한
+    <strong>삼각측정(triangulation)</strong> 틀로 재설계. SET는 조합 지표 중 하나의 입력으로 국한하고 가중치를 명시 공표.
+  </div>
+  <div class="insight-action" style="padding:5px 12px; margin:3px 0; font-size:8.75pt; line-height:1.5;">
+    <strong>② 형성·의사결정 평가 분리</strong> — 학기 중간 SGID(소집단 수업진단)로 개선 도구를 확보, 학기 말 SET는
+    이론·실험·UGRP·대학원 등 <strong>강의유형별 차별화 문항 세트</strong>를 적용. 용도가 다르면 설계 원칙도 달라야 함.
+  </div>
+  <div class="insight-action" style="padding:5px 12px; margin:3px 0; font-size:8.75pt; line-height:1.5;">
+    <strong>③ 편향 완화 절차 명문화</strong> — 성별·소수수강·학점기대 편향이 국제 연구에서 반복 보고되고 있으므로,
+    최소 응답 수 미달 과목 비공개, 철회 가능 권리 안내, 인사·포상 활용 시 동료평가 필수화 등 구체 절차를 명문화.
+  </div>
+
+  <h3 style="margin:6px 0 4px; padding:3px 11px;">A1-4. 핵심 참고문헌</h3>
+  <ul class="limit-box" style="list-style-position:inside; padding:5px 12px 5px 14px; font-size:8.05pt; margin:0;">
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">Uttl, B., White, C. A., &amp; Gonzalez, D. W. (2017). Meta-analysis of faculty’s teaching effectiveness. <em>Studies in Educational Evaluation, 54</em>, 22–42. DOI: 10.1016/j.stueduc.2016.08.007</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">Boring, A., Ottoboni, K., &amp; Stark, P. B. (2016). Student Evaluations of Teaching (Mostly) Do Not Measure Teaching Effectiveness. <em>ScienceOpen Research</em>. DOI: 10.14293/S2199-1006.1.SOR-EDU.AETBZC.v1</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">AAUP. (2015). <em>Statement on Teaching Evaluation</em>. American Association of University Professors.</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">UC Academic Council. (2020). <em>Report of the Academic Council Teaching Evaluation Task Force</em>. University of California.</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">UC Berkeley Committee on Teaching. (2015). <em>Teaching Dossier and Peer Review of Teaching Recommendations</em>.</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">Stanford University. <em>Course Feedback as a Measure of Teaching Effectiveness</em>. Office of the Vice Provost for Faculty Development &amp; Diversity.</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">Harvard Medical School. (2019). <em>Small Group Instructional Diagnosis (SGID)</em>.</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">USC Academic Senate. (2018). <em>New Model of Teaching Excellence: Multi-measure, Peer-review-based Evaluation</em>.</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">University of Michigan CRLT. <em>Evaluation of Teaching: Multiple Sources of Evidence</em>.</li>
+    <li style="margin:1.5px 0 1.5px 14px; line-height:1.45;">Yale Poorvu Center. <em>Online Course Evaluations (OCE) System</em>; MIT Registrar. <em>Subject Evaluation System</em>.</li>
+  </ul>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ════════════════════════════════
+     페이지 12 — 세계 최고수준 대학 운용 사례 심층 분석
+════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section" style="padding:7px 16px 8px; margin-bottom:5px;">
+  <div style="display:inline-block; padding:2px 9px; background:#e2e8f0; color:#475569; font-size:8.5pt; font-weight:700; border-radius:3px; letter-spacing:0.5px; margin-bottom:3px;">[참고 2 · APPENDIX 2]</div>
+  <h2 style="margin-bottom:4px; padding-bottom:3px;">세계 최고수준 대학 운용 사례 심층 분석</h2>
+
+  <h3 style="margin:4px 0 3px; padding:2.5px 10px; font-size:9.7pt;">A2-1. 대학별 핵심 운용 사례</h3>
+  <table style="width:100%; border-collapse:collapse; font-size:7.3pt; margin:1px 0 3px; line-height:1.35;">
+    <thead>
+      <tr>
+        <th style="width:11%; padding:3px 6px;">대학</th>
+        <th style="width:24%; padding:3px 6px;">설계 원칙</th>
+        <th style="width:38%; padding:3px 6px;">핵심 장치 · 운용 디테일</th>
+        <th style="width:27%; padding:3px 6px;">DGIST 적용 시사점</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#1a3a6b;">USC<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(2018이후)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">SET를 <em>주요</em> 지표에서 배제, <strong>동료 평가 중심(majority)</strong>의 다원 체계로 전환.</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 교수 효과성 50%+ 가중치 할당, 동료 평가가 majority<br>· 클래스룸 관찰 · 강의계획서 검토 · 평가 설계 검토 · 교수 성찰문<br>· 동료 평가 교육 의무화 · 편향 훈련 필수</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#7f1d1d;"><strong>인사·포상 시 동료 평가 비중을 점진적으로 확대</strong>하는 단계적 로드맵 채택 권장</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#1a3a6b;">Stanford<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(2021 신시스템)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">학생 피드백을 “교수학습 효과성의 하나의 입력”으로 명시, 세그먼트 피드백 병행.</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· Course Feedback + Section Feedback 이원화 운영<br>· 원격수업 추천 문항 세트 별도 제공<br>· 학습목표 · 교수자 명시 커스텀 문항 설계 가이드 공개</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#7f1d1d;"><strong>강의유형별 차별 문항 세트</strong> 설계 시 표준구 모듈화 참고(실험·세미나·대학원)</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#1a3a6b;">UC&nbsp;Berkeley<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(COT 2015)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">단일 종합문항 폐지, <strong>교수포트폴리오(Teaching Dossier)</strong>를 구조적 장치로 채택.</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 교수 성찰 + 학생 원자료(raw) + 동료 관찰 + 자료(syllabus, 과제, 근거) 포트폴리오 합본<br>· 종합문항 제거·명시 경고문</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#7f1d1d;"><strong>교수 성찰문 도입</strong> · 원자료(대표 원문) 제공으로 인사 자료 질 제고</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#1a3a6b;">Harvard&nbsp;HMS<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(SGID)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;"><strong>형성평가·의사결정평가 구조적 분리</strong>를 제도화.</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 학기 중간 소집단 수업진단(SGID) 30–45분 세션<br>· 퍼실리테이터가 이끌어 익명·합의 기반 피드백 조서 작성, 교원은 당일 내에 함께 리뷰·당학기 개선</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#7f1d1d;"><strong>학기 중간 SGID 파일럿</strong>을 CTL이 교수·학과별 신청제로 운영</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#1a3a6b;">MIT<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(Subject Eval.)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">학생에게 과목 구성·학습량 추정을 묻고, 교원이 고유 설계한 커스텀 문항을 적극 활용.</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 강의·토론·실험 구분별 분리 평가<br>· 교원별 커스텀 문항 제출 절차 공식화<br>· 실시간 응답률 조회로 교원 자체 독려 유도</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#7f1d1d;"><strong>강의자 커스텀 문항 제출</strong> 공식화, <strong>실시간 응답률 대시보드</strong> 제공</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#1a3a6b;">Yale<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(OCE)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">표준 12문항 + 교원별 커스텀문항, <strong>학생 공개·비공개 문항 구분</strong>.</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 학생 공개되는 1–9문(교수학습 질) + 비공개 10–12문(강사·TA 평가)<br>· 최소 수강 5명 이상만 평가 수행<br>· 성적 조기열람과 완료·동의 연계</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#7f1d1d;"><strong>공개·비공개 문항 분리설계</strong> · <strong>최소 응답수 기준</strong>(소수 과목 보호)</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#1a3a6b;">U.&nbsp;of&nbsp;Michigan<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(CRLT)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">다중 근거(multiple sources)를 교수평가의 <strong>제도적 표준</strong>으로 명문화.</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· SET + 동료 관찰 + 교재·과제 리뷰 + 학생 결과물 교차 검증<br>· 조기 피드백폼(Early Feedback Form), 중간 피드백 표준 제공<br>· CRLT 컨설팅 서비스 접목</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#7f1d1d;"><strong>표준 조기·중간 피드백폼</strong> 도입, CTL 컨설팅 채널로 운영</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#1a3a6b;">CMU&nbsp;Eberly<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(종합 지원)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;"><strong>동료 평가 도구·세미나를 갖춘 지원체계(CTL)</strong>로 교수 능력 개발 연계.</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 상용 평가 양식·루브릭 배포, 학습분석 파트너십<br>· Peer Observation 커뮤니티 프로그램 운영</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#7f1d1d;"><strong>CTL 주도 워크숍</strong>으로 교원용 편의 양식·루브릭 공동 개발</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:4px 0 3px; padding:2.5px 10px; font-size:9.7pt;">A2-2. 공통 설계 원칙 5개</h3>
+  <div class="insight-action" style="padding:4px 10px; margin:2px 0; font-size:7.95pt; line-height:1.45;">
+    <strong>① 다원(triangulation)</strong> — 학생 피드백·동료 관찰·교수자 성찰·자료 리뷰 중 최소 3종 결합. SET 단일 의존은 국제 표준에서 공식 배제.<br>
+    <strong>② 목적 분리(formative ≠ summative)</strong> — 학기 중간은 개선용, 학기 말은 의사결정용. 도구·문항·공개 범위를 용도에 따라 구분.<br>
+    <strong>③ 커스터마이제이션</strong> — Yale·MIT·Stanford 공통으로 <em>표준 문항 + 교원 커스텀 문항</em> 이원 구조. 강의유형별 모듈과 일치.<br>
+    <strong>④ 편향 완화</strong> — 최소 응답수 기준(Yale 5명), 소수 과목 비공개, 편향 훈련 의무화(USC), 경고문(UC) 등을 규정으로 명문화.<br>
+    <strong>⑤ 닫힌 피드백 루프(closed loop)</strong> — Yale·Michigan은 결과 대시보드·CTL 컨설팅·다음 학기 반영을 한 표준 절차로 명문화하여 “평가→개선” 연결을 클로징.
+  </div>
+
+  <h3 style="margin:5px 0 3px; padding:2.5px 10px; font-size:9.7pt;">A2-3. DGIST 적용 로드맵(단계별 트랙)</h3>
+  <table style="width:100%; border-collapse:collapse; font-size:7.3pt; margin:1px 0; line-height:1.35;">
+    <thead>
+      <tr>
+        <th style="width:14%; padding:3px 6px;">단계</th>
+        <th style="width:30%; padding:3px 6px;">핵심 과제</th>
+        <th style="width:30%; padding:3px 6px;">참조 운용 사례</th>
+        <th style="width:26%; padding:3px 6px;">성과지표</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#059669;">증상완화<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(즉시)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 결과 피드백 대시보드 개선<br>· 소수 과목 익명 보호·최소응답수<br>· 교원 커스텀 문항 제출</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">Yale OCE · MIT Subject Eval.<br>· 공개·비공개 문항 분리<br>· 최소 세션 수 = 5</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#1f2937;">“익명성 확보” 응답 비율<br>· 커스텀문항 채택률</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#d97706;">구조개편<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(1–2학기)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 강의유형별 차별 문항 세트<br>· 형성·의사결정 분리 · SGID 파일럿<br>· CTL 컨설팅 채널</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">Stanford · Harvard HMS · CRLT<br>· 이론·실험·UGRP·대학원 모듈 세트<br>· 중간 피드백폼 표준화</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#1f2937;">· 교원 SGID 참여율<br>· 학습자 인지 개선 임팩트</td>
+      </tr>
+      <tr>
+        <td style="padding:1.5px 5px; vertical-align:top; font-weight:700; color:#dc2626;">제도전환<br><span style="font-size:6.9pt; font-weight:400; color:#6b7280;">(2년 이내)</span></td>
+        <td style="padding:1.5px 5px; vertical-align:top;">· 동료 평가 도입·교수포트폴리오<br>· 교원 성찰문·원자료 권고<br>· 가중치·편향 훈련 명문화</td>
+        <td style="padding:1.5px 5px; vertical-align:top;">USC 2018 모델 · UC Berkeley · AAUP<br>· 인사·포상용 평가 majority = 동료<br>· SET 활용 시 경고문</td>
+        <td style="padding:1.5px 5px; vertical-align:top; color:#1f2937;">· 동료 평가 적용 비율<br>· 다원 지표 결합 지수<br>· 교수포트폴리오 제출률</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /main -->
+</section>
+
+<!-- ════════════════════════════════
+     페이지 15 — 참고 3 · 현행→개선안 문항 비교표
+════════════════════════════════ -->
+<section class="page">
+<div class="main">
+
+<div class="section" style="padding:9px 18px 12px; margin-bottom:6px;">
+  <div style="display:inline-block; padding:2px 9px; background:#1a3a6b; color:#fff; font-size:8.5pt; font-weight:700; border-radius:3px; letter-spacing:0.5px; margin-bottom:4px;">[참고 3 · APPENDIX 3 · 현행→개선안 문항 비교표]</div>
+  <h2 style="margin-bottom:6px; padding-bottom:5px;">현행 12문항 → 개선안 비교표 &amp; 신규 권장 문항</h2>
+  <p class="sub" style="margin-bottom:8px;">대학 교과(이론) 강의평가 12문항을 기준으로 한 즉시 적용 가능한 개선안. 다른 강의 유형(실험·UGRP·대학원·전문대학원)은 동일 골격에 유형별 모듈을 가산하는 방식으로 확장 가능.</p>
+
+  <h3 style="margin:6px 0 4px; padding:3px 11px;">A3-1. 현행 이론 강의 12문항 — 차원 분류</h3>
+  <table style="font-size:8.4pt;">
+    <tr>
+      <th style="width:6%;">#</th>
+      <th style="width:36%;">현행 문항</th>
+      <th style="width:18%;">측정 차원</th>
+      <th style="width:14%;">진단</th>
+      <th style="width:26%;">개선 방향</th>
+    </tr>
+    <tr><td class="num">1</td><td>수업계획서를 정해진 기간에 등록하였다</td><td>행정·절차</td><td class="highlight">분리 필요</td><td>시스템 자동 모니터링으로 대체</td></tr>
+    <tr><td class="num">2</td><td>강의 목표·계획에 부합하여 체계적으로 진행</td><td>수업 설계</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">3</td><td>다양한 방법으로 학생의 적극적 수업 참여 유도</td><td>능동 학습</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">4</td><td>(학습자 자기) 이 수업에 성실하게 참여했다</td><td>학습자 자기평가</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">5</td><td>교수님에게 질문·도움 요청이 수월했다</td><td>접근성</td><td>유지</td><td>표현 보완(“쉬운 분위기”로 환경 측정 강화)</td></tr>
+    <tr><td class="num">6</td><td>주당 학습 시간 (정량)</td><td>학습 투입량</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">7</td><td>교수님은 성실하고 열정적으로 수업에 임했다</td><td>교수자 태도</td><td class="highlight">표현 개선</td><td>“정의적 인상 → 행동 기술”로 재구성. 외국인·소수자 교원 편향 완화.</td></tr>
+    <tr><td class="num">8</td><td>수업내용은 이해하기 쉽고 명확하게 전달되었다</td><td>전달 명확성</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">9</td><td>수업자료·교재는 내용 이해에 도움이 되었다</td><td>자료 품질</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">10</td><td>시험·과제에 대해 적절한 피드백이 이루어졌다</td><td>피드백</td><td class="highlight">표현 개선</td><td>존재 여부 → 유용성·충분성·적시성 (UCL·Hattie d=0.73 근거)</td></tr>
+    <tr><td class="num">11</td><td>수업을 통해 이 분야에 대해 많은 것을 배웠다</td><td>학습 성과</td><td class="highlight">표현 개선</td><td>막연한 학습량 → 실질적 역량 변화 (MIT·NUS 모델)</td></tr>
+    <tr><td class="num">12</td><td>수업량 및 과제의 분배가 적절했다</td><td>부담 관리</td><td>유지</td><td>—</td></tr>
+  </table>
+  <div class="insight" style="padding:7px 14px; line-height:1.6; font-size:8.7pt;">
+    <strong>차원 매핑 결과:</strong> 측정 충실(●) 6개, 부분 측정(△) 5개, 분리 필요(✗) 1개.
+    그러나 글로벌 모범사례(p.14) 9개 대학이 공통적으로 또는 차별적으로 설정하는 <strong>비판적 사고·연구 연계·소속감·Constructive Alignment</strong> 4개 차원은 <em>아예 측정되지 않거나 간접 측정</em>이다 (5-2 매핑 참조).
+  </div>
+
+  <h3 style="margin:7px 0 4px; padding:3px 11px;">A3-2. 즉시 적용 가능한 비교표 (현행 → 개선안)</h3>
+  <table style="font-size:8.3pt;">
+    <tr>
+      <th style="width:5%;">#</th>
+      <th style="width:34%;">현행</th>
+      <th style="width:46%;">개선안 (Draft)</th>
+      <th style="width:15%;">변경 유형</th>
+    </tr>
+    <tr><td class="num">1</td><td>수업계획서를 정해진 기간에 등록</td><td><strong>삭제</strong> — 행정 시스템 자동 모니터링으로 대체</td><td class="highlight">행정 분리</td></tr>
+    <tr><td class="num">2</td><td>강의 목표·계획에 부합하여 체계적 진행</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">3</td><td>다양한 방법으로 적극적 수업 참여 유도</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">4</td><td>이 수업에 성실하게 참여했다 (학습자 자기)</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">5</td><td>교수님에게 질문·도움 요청이 수월했다</td><td>“수업 중 질문하거나 도움을 요청하기 <strong>쉬운 분위기</strong>가 형성되었다”</td><td>표현 개선</td></tr>
+    <tr><td class="num">6</td><td>주당 학습 시간 (정량)</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">7</td><td>교수님은 성실하고 열정적으로 수업에 임했다</td><td>“교수자는 학생의 학습을 지원하기 위해 <strong>적극적으로 노력</strong>했다”</td><td>표현 개선</td></tr>
+    <tr><td class="num">8</td><td>수업내용이 이해하기 쉽고 명확하게 전달</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">9</td><td>수업자료·교재는 내용 이해에 도움</td><td>유지</td><td>—</td></tr>
+    <tr><td class="num">10</td><td>시험·과제에 대해 적절한 피드백 이루어짐</td><td>“받은 피드백이 <strong>내 학습 향상에 실질적으로 도움</strong>이 되었다”</td><td>표현 개선</td></tr>
+    <tr><td class="num">11</td><td>수업을 통해 많은 것을 배웠다</td><td>“이 수업을 통해 나의 <strong>이해와 역량이 실질적으로 향상</strong>되었다”</td><td>표현 개선</td></tr>
+    <tr><td class="num">12</td><td>수업량 및 과제의 분배가 적절</td><td>유지</td><td>—</td></tr>
+    <tr style="background:#fef2f2;"><td class="num positive"><strong>N1</strong></td><td><em>(없음)</em></td><td><strong>“수업 목표·내용·평가 방식이 일관되게 연결되어 있었다.”</strong> &nbsp;<span style="font-size:7.5pt; color:#6b7280;">EN: Course objectives, content, and assessment were aligned consistently.</span></td><td class="positive">신규</td></tr>
+    <tr style="background:#fef2f2;"><td class="num positive"><strong>N2</strong></td><td><em>(없음)</em></td><td><strong>“이 수업은 나의 비판적·독립적 사고를 자극했다.”</strong> &nbsp;<span style="font-size:7.5pt; color:#6b7280;">EN: This course stimulated my critical and independent thinking.</span></td><td class="positive">신규</td></tr>
+    <tr style="background:#fef2f2;"><td class="num positive"><strong>N3</strong></td><td><em>(없음)</em></td><td><strong>“수업 내용이 연구 또는 실제 문제와 어떻게 연결되는지 이해할 수 있었다.”</strong> &nbsp;<span style="font-size:7.5pt; color:#6b7280;">EN: I could understand how the course content connects to research or real-world problems.</span></td><td class="positive">신규</td></tr>
+  </table>
+  <div class="insight-action" style="padding:7px 14px; line-height:1.6; font-size:8.7pt;">
+    <strong>결과:</strong> 12문항 → <strong>14문항</strong> (행정 1 삭제, 신규 3 추가). 응답 부담 증가는 최소화하면서 측정 범위는 확대. Q5·Q7·Q10·Q11 표현 개선과 신규 N1·N2·N3 추가가 함께 이뤄질 때 5-2의 측정 갭(CA 정렬·비판적 사고·연구 연계·피드백 유용성)이 일차로 봉합된다. ※ 신규 3문항 명칭(N1·N2·N3)은 동반 보고서 「강의평가 지표 개선방안 보고서 v1.0」 §3-3과 동일. 또한 본 분석 이후 학습 환경 변화(외부 학습 자원 활용 보편화)에 대응하여 D7 학습 주체성 차원 4문항(N4·N5·N6·N7)이 추가 도입되어, 최종 개선안은 18문항으로 확장되었다 (개선방안 보고서 v1.0 §2-3·§3-3 참조).
+  </div>
+
+  <h3 style="margin:7px 0 4px; padding:3px 11px;">A3-3. 강의 유형별 모듈 가산 — 핵심 차별 문항 (Stanford·MIT·ETH 모델 참조)</h3>
+  <table style="font-size:8.3pt;">
+    <tr>
+      <th style="width:18%;">강의 유형</th>
+      <th style="width:24%;">추가 차원</th>
+      <th style="width:58%;">핵심 차별 문항 예시</th>
+    </tr>
+    <tr><td><strong>이론 강의</strong></td><td>개념 전달·구조화</td><td>새로운 관점 획득, 비판적 사고 유도 — 기본 13~14문항으로 충분</td></tr>
+    <tr><td><strong>실험·실습</strong></td><td>실험 설계·안전</td><td>이론-실험 연계 / 실험 지침 명확성 / 안전 교육 충분성 (ETH Zurich 실습 차원 참조)</td></tr>
+    <tr><td><strong>이론+실습</strong></td><td>통합 설계</td><td>이론과 실습의 연계성 / 통합적 학습 효과</td></tr>
+    <tr><td><strong>UGRP</strong></td><td>연구 지도</td><td>연구 방향 지도 / 연구 주도성 지원 / 진로 도움 / 실험실 운영</td></tr>
+    <tr><td><strong>대학원·전문대학원</strong></td><td>연구자 개발</td><td>연구 심화 / 비판적 토론 / 논문·발표 피드백 / 이론-실무 연계(전문대학원)</td></tr>
+  </table>
+
+  <div class="insight" style="padding:7px 14px; line-height:1.6; font-size:8.7pt; margin-top:8px;">
+    <strong>이론적 근거 — 신규 문항 N1·N2·N3가 측정하는 것:</strong>
+    <strong>N1 Constructive Alignment</strong>는 Biggs(1996) 이래 학습 효과의 가장 강력한 설계 원리이며 ETH·Stanford·NUS·UCL이 공통 채택.
+    <strong>N2 비판적 사고</strong>는 Caltech·Oxford·Cambridge가 “지적 도전”을 긍정 지표로 채택한 전통(쉬운 수업 편향 차단).
+    <strong>N3 연구 연계</strong>는 Cambridge “최신 연구와 강의 연결” · UCL Connected Curriculum의 DGIST판.
+    세 문항은 단순 신규 추가가 아니라 <em>국제 표준에서 빠져 있던 차원의 보강</em>이다.
+  </div>
+
+  <p style="font-size:7.8pt; color:#9ca3af; margin-top:8px; text-align:right;">— 본 보고서 v1.0 본문 끝 —</p>
+
+</div>
+
+</div><!-- /main -->
+</section>
+
+</body>
+</html>
