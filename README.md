@@ -6,9 +6,9 @@ DGIST 교수학습센터(CTL)에서 발행한 강의지표 개선안 검토용 �
 
 | # | 파일 | 한글 정식 명칭 | 역할 |
 |---|---|---|---|
-| 1 | [01-survey-analysis.html](https://dgist-ctl.github.io/dgist-ctl-course-evaluation-reform/01-survey-analysis.html) | 강의평가지표 설문 분석 보고서 v1.0 | 진단 |
-| 2 | [02-improvement-proposal.html](https://dgist-ctl.github.io/dgist-ctl-course-evaluation-reform/02-improvement-proposal.html) | 강의평가지표 개선 방안 보고서 v1.0 | 처방 |
-| 3 | [03-type-comparison.html](https://dgist-ctl.github.io/dgist-ctl-course-evaluation-reform/03-type-comparison.html) | 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 | 적용 |
+| 1 | [01-survey-analysis.html](https://leeseunghun815-create.github.io/dgist-ctl-course-evaluation-reform/01-survey-analysis.html) | 강의평가지표 설문 분석 보고서 v1.0 | 진단 |
+| 2 | [02-improvement-proposal.html](https://leeseunghun815-create.github.io/dgist-ctl-course-evaluation-reform/02-improvement-proposal.html) | 강의평가지표 개선 방안 보고서 v1.0 | 처방 |
+| 3 | [03-type-comparison.html](https://leeseunghun815-create.github.io/dgist-ctl-course-evaluation-reform/03-type-comparison.html) | 강의평가 유형별 현행·개선안 비교분석 보고서 v1.0 | 적용 |
 
 > **알림** &nbsp; 위 링크는 GitHub Pages 활성화 후 작동합니다 (`Settings → Pages → Source: main / root`). 활성화 전에는 raw 파일 형태로만 보입니다. 실제 호스팅 도메인은 GitHub 사용자/조직 이름에 따라 다를 수 있습니다.
 
